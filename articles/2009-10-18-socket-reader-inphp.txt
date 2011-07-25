@@ -1,0 +1,255 @@
+---
+title: Socket reader in PHP
+author: Aleksey V Zapparov AKA ixti
+date: 18/10/2009
+category: development/networking
+tags: php, server, socket
+
+There are lots of articles which show you how to create a socket reader in PHP. You can find them <a href="http://www.google.com/search?q=php+socket">on google</a>. My starting points were articles <a href="http://www.devshed.com/c/a/PHP/Socket-Programming-With-PHP/">on devshed</a> and <a herf="">zend's devzone</a>. Unfortunately bring too few light on me. Although articale of <a href="http://www.devshed.com/cp/bio/icarus/">icarus, (c) Melonfire</a> was my start point in understnding how to write a socket reader. So now I can dig a little bit deeper...
+
+~
+
+
+The best place to read about sockets in PHP was <a href="">PHP Manual</a>. It has great <a href="">examples of using sockets</a> in documentation, which brings much more light then articles I mentioned above. Example of server do not finishes loop after client disconnects, as it was in devshed's article. But it has a disadvantage anyway. It do not handle multiple connections simulatenously. So after once client connects, secocond client have to wait for responses until first client will disconnect.
+
+I wanted to create a server which will handle multiple connections simulatenously. In my sorry there's now way to do in simple way. But I'm not the one who is looking for easy ways :)) So if you hae read example from documentation I must noticed that the main hack is in nested loop. So all we need is to run this nested loop in another thread. But as we know PHP still do not know anything about threading.
+
+We can simulate multithreading in two ways. First is to implement some kind of fair division of time between clients, similar to how it handled in article from devzone. Another way is to implement two kind of daemons. First is the main, let's call it <i>dispatcher</i>. Second type is <i>worker</i> daemon which will handle real actions. So <i>dispatcher</i> will return port of first available and non-busy <i>worker</i>. After client recieves a resonse with host:port it will connect to <i>worker</i> to do all the work.
+
+In this post I'm going to create a queue based server from scratch basing on PHP manual's example in step by step manner. So next time I hope I'll be able to implement my second variant described above. But for now I'll create calss which I'll refactor then to implement in my <a href="http://github.com/ixti/ChrootGateway">ChrootGateway</a> as one of communication adapters.
+
+Now let's step by step create our socket listener. First we'll do some basic configuration. You may not need it, but I left it from PHP Manual's examples, as they seems pretty reasonable:
+<pre lang="php">
+error_reporting(E_ALL);
+set_time_limit(0);
+ob_implicit_flush();
+</pre>
+
+Then we define some variables, <code>$addr</code> is an addres of interface which our listner should listen for and <code>$port</code> is a port number. Third variable is some kind of placeholder for future socket resource:
+<pre lang="php">
+$addr = '0.0.0.0';
+$port = 12345;
+$sock = null;
+</pre>
+
+I have defined a <code>socket_error($msg)</code> function which displays an error if occured in the STDERR, closes socket and terminates execution:
+<pre lang="php">
+function socket_error($msg)
+{
+    fwrite(STDERR, $msg . socket_strerror(socket_last_error()));
+
+    // Close sockets
+    global $sock;
+    @socket_close($sock);
+
+    exit(1);
+}
+</pre>
+
+Then we creating a socket, binding it and strating to listen:
+<pre lang="php">
+$sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+if (false === $sock) {
+    socket_error('socket_create() failed');
+}
+
+if (false === socket_bind($sock, $addr, $port)) {
+    socket_error('socket_bind() failed');
+}
+
+if (false === socket_listen($sock, 5)) {
+    socket_error('socket_listen() failed');
+}
+</pre>
+
+All that last is to run an infinite loop of socket reading and listening for new connections. I have defined a <code>$pool</code> array which will store all connections we have basic one <code>$sock</code> and all spawn ones retreived from <code>socket_accept()</code>:
+<pre lang="php">
+$pool = array($sock);
+</pre>
+
+Inside infinite loop (<code>while (true) { /* ... */ }</code>) I clean the pool first on every cycle removing all non-resources (if any) from it:
+<pre lang="php">
+foreach ($pool as $conn_id => $conn) {
+    if ( ! is_resource($conn)) {
+        unset($pool[$conn_id]);
+    }
+}
+</pre>
+
+As <code>socket_listen()</code> changes passed by reference array, I'm creating a copy pool:
+<pre lang="php">
+$active = $pool;
+</pre>
+
+If <code>socket_select()</code> fails I'm terminating a listener. You can add count of fails with conjuction of last error occured time to build less capricious version :))
+<pre lang="php">
+if (false === socket_select($active, $w = null, $e = null, null)) {
+    socket_error('socket_select() failed');
+}
+</pre>
+
+make attention on fourth argument I passed in <code>socket_select()</code>. It's <i>NULL</i> what will make this function wait for any activity. If you'll pass 0 (zero) you'll meet very aggressive CPU usage. If you don't understand why - ask me :)) So after we have got an array of active connections, we need to first if there any new connections, and if any register it in the pool. And don't forget to remove <code>$sock</code> from active pool as all last is related to spawn socket (client connetions) only:
+<pre lang="php">
+if (in_array($sock, $active)) {
+    $conn = socket_accept($sock);
+    if (is_resource($conn)) {
+        // Send welcome message
+        $msg = PHP_EOL . 'WELCOME TO THE PHP SIMPLE SERVER' . PHP_EOL;
+        socket_write($conn, $msg, strlen($msg));
+        $pool[] = $conn;
+    }
+    unset($active[array_search($sock, $active)]);
+}
+</pre>
+
+Finally we can work with thing, clients sent us. As you can see, server close connection with client if client sents <i>exit</i> or <i>quit</i> request. And closes all connections and finishing it's (server) loop upon <i>stop</i> and <i>halt</i>. For all other input md5 hash will be calculated and responsed to requester:
+<pre lang="php">
+foreach ($active as $conn) {
+    $request = socket_read($conn, 2048, PHP_NORMAL_READ);
+    
+    // If connection is closed, remove it from pool and skip
+    if (false === $request) {
+        unset($pool[array_search($conn, $pool)]);
+        continue;
+    }
+    
+    $request = trim($request);
+
+    // Skip to next if client tells nothing
+    if (0 == strlen($request)) {
+        continue;
+    }
+    
+    printf('GOT: %s' . PHP_EOL, $request);
+
+    if (1 === preg_match('/quit|exit/i', $request)) {
+        socket_close($conn);
+        unset($pool[array_search($conn, $pool)]);
+        continue;
+    }
+    
+    if (1 === preg_match('/stop|halt/i', $request)) {
+        break 2;
+    }
+
+    $response = md5($request) . PHP_EOL;
+    socket_write($conn, $response, strlen($response));
+}
+</pre>
+
+Finally, I'm closing a connection outside the loop:
+<pre lang="php">
+socket_close($sock);
+exit(0);
+</pre>
+
+Ok, now putting it all together, so you can simply copy-paste it for free. :)) And don't affraid to post a comment :)) even if you think that I wrote some piece of sh*t.
+<pre lang="php">
+< ?php
+
+// Some basic configuration.
+error_reporting(E_ALL);
+set_time_limit(0);
+ob_implicit_flush();
+
+// Address and port to listen on
+$addr = '0.0.0.0';
+$port = 12345;
+$sock = null;
+
+// Helper to break execution upon socket related error
+function socket_error($msg)
+{
+    fwrite(STDERR, $msg . socket_strerror(socket_last_error()));
+
+    // Close sockets
+    global $sock;
+    @socket_close($sock);
+
+    exit(1);
+}
+
+// Creating and binding socket
+$sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+if (false === $sock) {
+    socket_error('socket_create() failed');
+}
+
+if (false === socket_bind($sock, $addr, $port)) {
+    socket_error('socket_bind() failed');
+}
+
+if (false === socket_listen($sock, 5)) {
+    socket_error('socket_listen() failed');
+}
+
+// Client connections' pool
+$pool = array($sock);
+
+// Main cycle
+while (true) {
+    // Clean-up pool
+    foreach ($pool as $conn_id => $conn) {
+        if ( ! is_resource($conn)) {
+            unset($pool[$conn_id]);
+        }
+    }
+
+    // Create a copy of pool for socket_select()
+    $active = $pool;
+
+    // Halt execution if socket_select() failed
+    if (false === socket_select($active, $w = null, $e = null, null)) {
+        socket_error('socket_select() failed');
+    }
+
+    // Register new client in the pool
+    if (in_array($sock, $active)) {
+        $conn = socket_accept($sock);
+        if (is_resource($conn)) {
+            // Send welcome message
+            $msg = PHP_EOL . 'WELCOME TO THE PHP SIMPLE SERVER' . PHP_EOL;
+            socket_write($conn, $msg, strlen($msg));
+            $pool[] = $conn;
+        }
+        unset($active[array_search($sock, $active)]);
+    }
+
+    // Handle every active client
+    foreach ($active as $conn) {
+        $request = socket_read($conn, 2048, PHP_NORMAL_READ);
+        
+        // If connection is closed, remove it from pool and skip
+        if (false === $request) {
+            unset($pool[array_search($conn, $pool)]);
+            continue;
+        }
+        
+        $request = trim($request);
+
+        // Skip to next if client tells nothing
+        if (0 == strlen($request)) {
+            continue;
+        }
+        
+        printf('GOT: %s' . PHP_EOL, $request);
+
+        if (1 === preg_match('/quit|exit/i', $request)) {
+            socket_close($conn);
+            unset($pool[array_search($conn, $pool)]);
+            continue;
+        }
+        
+        if (1 === preg_match('/stop|halt/i', $request)) {
+            break 2;
+        }
+
+        $response = md5($request) . PHP_EOL;
+        socket_write($conn, $response, strlen($response));
+    }
+}
+
+// Finally close socket
+socket_close($sock);
+exit(0);
+</pre>

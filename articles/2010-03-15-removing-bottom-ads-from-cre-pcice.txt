@@ -1,0 +1,23 @@
+---
+title: Remov­ing bot­tom ads from CRE PCI CE
+author: Aleksey V Zapparov AKA ixti
+date: 15/03/2010
+category: oscommerce
+tags: cre-loaded, freedom, gpl, php
+
+<a href="http://www.creloaded.com/">CRE loaded</a> has two versions of CRE PCI - CE (Community Edition) and PRO. I know nothing about PRO version, but CE is built on top of <a href="http://www.oscommerce.com/">osCommerce</a> free software released under terms of <a href="http://www.gnu.org/copyleft/gpl.html">GNU/GPL</a>. As this software is released as free (as in freedom) software you are free to modify it. And I guess you would like to remove annoying ads in the bottom of each page, which also breaks HTML validity (because div block with ads is added AFTER closing html tag). So I'm glad to share with you a patch to remove them.
+
+~
+
+
+As I told before, this ads breaks HTML validity. So, if you'll look into the source of generated HTML, you'll see something like this:
+<pre lang="html">
+// ...
+</body>
+</html><div align="center">
+// ...
+</pre>
+
+It's because code of ads (which is (GOTCHA) downloaded from CRE server) is included AFTER template was generated and sent to the output.
+
+I have prepared a <a href="http://gist.github.com/332893">patch for the CRE PCI CE v.6.4.1a</a>, so you can apply it to your existing website. Also I have prepared an ads-free distribute (for new installations) which you can download (without annoying registrations) as well as patch from my blog (see links below).

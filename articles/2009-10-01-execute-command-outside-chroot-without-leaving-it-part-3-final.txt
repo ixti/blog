@@ -1,0 +1,20 @@
+---
+title: Exe­cute com­mand out­side chroot without lea­ving it. Part 3 — Final
+author: Aleksey V Zapparov AKA ixti
+date: 01/10/2009
+category: administration/development/ideas
+tags: chroot, php, tools
+
+After I have discovered that some of my friends find this tool useful, or at least interesting, I've started to implement it with OOP concepts. Right now it is still in very-alpha stage, but already can say <i>"Hello, World!"</i>. You can grab your copy from <a href="http://github.com/ixti/ChrootGateway">github repo</a>. 
+
+~
+
+
+Sources are documented, so you can easily understand what's going on behind the scene. But let me introduce some basic concepts.
+
+The main class is <code>ChrootGateway</code> it deals with all other pieces and runs main daemon infinite cycle. Before daemon run, you can register can <code>ChrootGateway_Suite_*</code>. Suites are packages of handlers to serve some context. After <code>ChrootGateway</code> started it read commands from FIFO channel, upon valid command meet it receives an object of <code>ChrootGateway_Command</code>. Then it tries to execute specified in <code>ChrootGateway_Command</code> object handler within specified context. Result of execution is <code>ChootGateway_Result</code> which then serialized and written to specified output.
+
+I hope that was clear. Feel free to mail me a question if something still unclear :))
+
+PS This post covers ChrootGateway v.0.0.1a and may not correspond to later versions.
+Fork me at <a href="http://github.com/ixti/ChrootGateway">http://github.com/ixti/ChrootGateway</a>

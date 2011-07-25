@@ -1,0 +1,81 @@
+---
+title: Dynamic maxRange for jQuery.DatePick plugin
+author: Aleksey V Zapparov AKA ixti
+date: 17/05/2010
+category: jquery
+tags: date-picker, javascript, plug-in
+
+I guess DatePicker is one of the most useless and most high-demand :)) control. And of course <a href="http://jquery.com">jQuery</a> has lots of it's implementations. But most notables IMHO are <a href="http://jqueryui.com/demos/datepicker/">DatePicker</a> from <a href="http://jqueryui.com/">jQuery UI</a> library and it's enhanced fork <a href="http://keith-wood.name/datepick.html">DatePick by Keith Wood</a>. For basics needs original DatePicker is OK, but if you want something more then simple one date picker, most like you'll need it's fork. I use them both same time - one for simple picker, and another for date ranges etc...
+
+~
+
+
+With both these date pickers you can set <code>minDate</code> (earliest selectable date) and <code>maxDate</code> (latest selectable date). So for example if you will set <code>minDate</code> to <em>5th of May 2010</em> and <code>maxDate</code> to <em>7th of May 2010</em>, (for example: <code>{ minDate: '5/5/2010', maxDate: '5/7/2010' }</code>) then <em>5th</em>, <em>6th</em> and <em>7th of May 2010</em> will be selectable.
+
+When you use jQuery.DatePick as region selector it automatically disables all dates before first selected one upon range picking. For example, you have a date picker with <code>minDate: '5/5/2010'</code> and <code>maxDate: '5/19/2010'</code>. This case only date since <em>5th of May 2010</em> till <em>19th of May 2010</em> will be selectable. When you will click on <em>7th of May</em>, then only dates since <em>7th of May</em> till <em>19th</em> will be available to select, until you'll pick second date in range.
+
+But sometimes you need a limited size of range available to select. For such extra-logic you can set <code>onSelect</code>. Basically you can check dates of range and alert if range size is higher then expected. For example, assuming you want range size to be less or equal to 3 days:
+
+~~~ javascript
+onSelect: function(dates) {
+    // skip action on datepicker reset e.g. target.datepick('setDate', [])
+    if (0 === dates.length) { return; }
+
+    // maximum allowed range size is 3 days represented in milliseconds
+    var maxRangeSize = 3 * 24 * 60 * 60 * 1000;
+
+    if (maxRangeSize < (dates[1].getTime() - dates[0].getTime())) {
+        alert("Don't be so greedy!");
+        // some more logic here
+    }
+}
+```
+
+It works OK, but looks too ugly :)) Fortunately there's a more easy way to preserve selectable range size - we simply disable all dates that are out of allowed range size just like it happens with dates that are earlier then first date of the range. I spent about 4 hours trying figure out, why <code>$(this).datepick('option', 'maxDate', new Date(dates[0].getTime() + 2*24*3600000))</code> does not work as I was expected. Finally I figured it out - but explaining internals of DatePick is out of this post coverage field ;)) so you can either look internals by yourself, or ask just ask me - I'll explain. Small tip - every update DatePick replaces it's contents with newly generated one.
+
+So, after all here's working sample that will do necessary thing:
+
+~~~ javascript
+onSelect: function(dates) {
+    var inst = $.data(this, $.datepick.dataName),
+        days = 3 * 24 * 60 * 60 * 1000,
+        max  = null;
+
+    // first run. preserve default maxDate
+    if (undefined === inst.defaultMaxDate) {
+        inst.defaultMaxDate = inst.get('maxDate');
+    }
+
+    // reset maxDate with datepicker on cleaning
+    if (0 === dates.length) {
+        $(this).datepick('option', 'maxDate', inst.defaultMaxDate);
+        return;
+    }
+
+    // calculate maxDate if range picker was initiated
+    if (inst.pickingRange) {
+        max = new Date(dates[0].getTime() + (days*24*3600000));
+
+        // dissallow new maxDate overlap default if it exists
+        if ((null !== inst.defaultMaxDate)
+            &amp;&amp; (0 < (max.getTime() - inst.defaultMaxDate.getTime()))) {
+            max = null;
+        }
+    }
+
+    inst.settings.maxDate = max || inst.defaultMaxDate;
+}
+```
+
+This variant of course works like a charm, but to make it more reusable, you can define it as an extension for <em>datepick</em> or use my version which you can grab either from <a href="http://gist.github.com/404161">github</a> or as an attachment in the bottom of this post. Here's it's basic usage:
+
+~~~ javascript
+$(function(){
+    $('#foobar').datepick({
+        onSelect: $.datepick.limitMaxRange,
+        maxRange: 3
+    });
+});
+```
+
+That's all folks! Feel free to comment or ask any question :))

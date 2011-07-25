@@ -1,0 +1,32 @@
+---
+title: Joomla! files and directories to ignore on versioning
+author: Aleksey V Zapparov AKA ixti
+date: 23/06/2010
+category: development/joomla
+tags: fhs, git, gitignore
+
+After I was hired for another project of Joomla! based website, I realized that I need a list of files and directories to ignore with the stupid content tracker. I love to keep all changes I made tracked by git. So today, I'm going to list all directories and files that are "optional" - those, which can be removed upon migration and so on...
+
+~
+
+
+As I track everything with git, this list is simply <code>.gitignore</code> file. But it's easy to read and understand, so you can adopt it for your needs:
+```
+/administrator/backups/*
+!/administrator/backups/index.html
+
+/administrator/cache/*
+!/administrator/cache/index.html
+
+/cache/*
+!/cache/index.html
+
+/logs/*
+!/logs/index.html
+
+/tmp/*
+!/tmp/index.html
+
+/configuration.php
+
+~~~ 

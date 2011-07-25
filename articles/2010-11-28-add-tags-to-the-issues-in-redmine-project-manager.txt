@@ -1,0 +1,17 @@
+---
+title: Add tags to the issues in Redmine project manager
+author: Aleksey V Zapparov AKA ixti
+date: 28/11/2010
+category: redmine
+tags: issue, ror, ruby, tagging, tracker
+
+<a href="http://www.redmine.org/">Redmine</a> does not gives you ability to tag your issues by default. Of course you can use categories, but sometimes you want to have more flexible way to group and search your issues. That cause creation of lots of issue tickets in the Redmine issue tracker. I was hoping that one day <a href="http://theadmin.org/articles/2007/05/22/about-me/">Eric</a> (assigned to the <a href="http://www.redmine.org/issues/1448">issue</a> created about two years ago) will make the world better and will implement this feature, but unfortunately he decided to <a href="http://theadmin.org/articles/2010/11/26/stepping-down-from-redmine/">step down</a> because of some internal conflict. So sad to see he moving out :(( I was really excited of his investments into Redmine...
+
+~
+
+
+But the life goes on, so I have decided to implement this feature by myself with help of <a href="https://github.com/jviney/acts_as_taggable_on_steroids">acts_as_taggable_on_steroids</a> plugin. Now it's done :)) I'm waiting for community to reply on my proposal. Also I have asked Eric to review my code, hoping he will have some time to.
+
+For those of you who want it now - you can either download latest snapshot from my <a href="https://github.com/ixti/redmine/tree/taggable_issues">github repo</a> or  ask me to assist you in adding this feature to your Redmine instance.
+
+<ins datetime="2010-12-05T19:49:55+00:00">UPDATE</ins> Suddenly I have realized that it was not a good idea to fork a project, as I don't have much time to prove current leads of Redmine that this should be a core feature. And I don't want to spend lots of time on migrations. So instead I have <a href="https://github.com/ixti/redmine_tags">started a new plugin</a> for this purposes, once plugin will become as stable and full of features as I want - I will merge it into my fork.

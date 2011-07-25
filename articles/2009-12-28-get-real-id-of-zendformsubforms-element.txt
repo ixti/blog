@@ -1,0 +1,132 @@
+---
+title: Get real ID of Zend_Form_SubForm’s Element
+author: Aleksey V Zapparov AKA ixti
+date: 28/12/2009
+category: zend-framework
+tags: php, view, zend_form
+
+<a href="http://framework.zend.com/">Zend Framework</a> has very good documentation, and from the very first days was very good structured. But once it became very-very complex. Despite it's awesome simplicity for common tasks it's very complex for non-trivial tasks. It has great component <code><a href="http://framework.zend.com/manual/en/zend.form.html">Zend_Form</a></code> for creating input forms and it's descendant <code>Zend_Form_SubForm</code>. You can get form element's ID with <code>$element->getId()</code> but you'll be surprised when you'll try this method with elements of <code>SubForm</code>...
+
+~
+
+
+Let's assume that we have a simple sub-form for addresses:
+<pre lang="php">
+class My_SubForm_Address extends Zend_Form_SubForm
+{
+    public function init()
+    {
+        $this->addElement('textarea', 'real');
+        $this->addElement('textarea', 'legal');
+        $this->addElement('textarea', 'postal');
+    }
+}
+</pre>
+
+Now we'll create a form which will use previously created sub-form:
+<pre lang="php">
+class My_Form_Contact extends Zend_Form
+{
+    public function init()
+    {
+        $this->addElement('text', 'name');
+        $this->addSubForm(new My_SubForm_Address(), 'address');
+        $this->addElement('text', 'phone');
+    }
+}
+</pre>
+
+Somewhere in controller we can access sub-forms elements with something like this (assuming that <code>$form</code> is instance of <code>My_From_Contact</code>):
+<pre lang="php">
+$element = $form->address->legal;
+</pre>
+
+But if you'll try to output it's ID in your view script, e.g.:
+<pre lang="php">
+echo $form->address->legal->getId();
+</pre>
+You'll be surprised because it will output "<i>legal</i>" while real ID of that element will be "<i>address-legal</i>".
+
+Why you may need this? For example you need to bind some JavaScript actions for that element, like I do when met this problem. Let's say we want to <code>alert()</code> value of <code>address-legal</code> every time it was changed. Here's a sample code using <a href="http://www.jquery.com">jQuery</a>:
+<pre lang="javascript">
+$(function(){
+    $('#address-legal').change(function(){ alert(this.value) });
+});
+</pre>
+Or the same but using <a href="http://www.dojotoolkit.org/">dojo</a>:
+<pre lang="javascript">
+dojo.addOnLoad(function(){
+    var el = dojo.byId('address-legal');
+    dojo.connect(el, 'change', null, function(){ alert(this.value) });
+});
+</pre>
+As we know that sub-form can be used inside any form, we will have to replace <code>address-legal</code> with something similar to <code>$address->legal->getId()</code>.
+
+Of course you'll want to do this inside your sub-form class, so let's create a simple script to register it with <code>Zend_View</code>'s <code>HeadScript</code> helper:
+<pre lang="php">
+class My_SubForm_Address extends Zend_Form_SubForm
+{
+    public function init()
+    {
+        $this->addElement('text', 'name');
+        $this->addSubForm(new My_SubForm_Address(), 'address');
+        $this->addElement('text', 'phone');
+
+        $this->_registerScript();
+    }
+
+    protected function _registerScript()
+    {
+        $script = $this->getView()->headScript();
+        $script->appendScript(
+            '$(function(){' .
+            '$("#' .
+            $this->legal->getId() .
+            '").change(function(){ alert(this.value); });' .
+            '});'
+        );
+    }
+}
+</pre>
+
+But I was surprised to see that it generates code similar to:
+<pre lang="javascript">
+<script type="text/javascript">
+    //< ![CDATA[
+$(function(){$("#legal").change(function(){ alert(this.value); });});    //
+
+
+
+I wondered why? I expected it to automatically return the ID it generates upon rendering. And that was the part of the answer on my question. Zend_Form assign relation upon render(). The solution is to override My_SubForm_Address::render(). So the final (and working) version is:
+
+class My_SubForm_Address extends Zend_Form_SubForm
+{
+    public function init()
+    {
+        $this->addElement('text', 'name');
+        $this->addSubForm(new My_SubForm_Address(), 'address');
+        $this->addElement('text', 'phone');
+    }
+
+    public function render()
+    {
+        $ret = parent::render();
+        $this->_registerScript();
+        return $ret;
+    }
+
+    protected function _registerScript()
+    {
+        $script = $this->getView()->headScript();
+        $script->appendScript(
+            '$(function(){' .
+            '$("#' .
+            $this->legal->getId() .
+            '").change(function(){ alert(this.value); });' .
+            '});'
+        );
+    }
+}
+
+
+Of course you can create a custom Zend_Form_Element but sometimes such approach may be excessive. And in my case it was.]]>

@@ -1,0 +1,128 @@
+---
+title: Socket reader in PHP. Second part
+author: Aleksey V Zapparov AKA ixti
+date: 22/10/2009
+category: development/networking
+tags: php, server, socket
+
+In the <a href="/?p=105">previous post</a> I have showed how to create a socket reader in php step by step. So by some strange tradition now I'm going to represent OOP variant. In fact, this is a sandbox version of new adapter for <a href="http://github.com/ixti/ChrootGateway">ChrootGateway</a>. :)) But it can be used anywhere, without any problems.
+
+~
+
+
+This class in fact is a simple wrapper. It will only take care about listening cycle. So creating and and binding socket is left similar to standard process of creating socket. As class has necessary documentation, I'll only show an example of it's usage. First of all you'll need to include it into your script:
+<pre lang="php">
+require_once 'SocketServer.php';
+</pre>
+
+Also, to use this server, you'll need to prepare a handler of requests. To stop server, handler should return boolean <code>false</code>. To disconnect client from server it should return <code>NULL</code>. Any else returned value will be returned as a response to client. So let's create a simple handler which will make server act exactly as it was on <a href="/?p=105">previous post</a>.
+<pre lang="php">
+function my_handler($request)
+{
+    if (1 === preg_match('/quit|exit/i', $request)) {
+        return null;
+    }
+
+    if (1 === preg_match('/stop|halt/i', $request)) {
+        return false;
+    }
+
+    return md5($request) . PHP_EOL;
+}
+</pre>
+
+Now I'm creating a socket server with <code>new SocketServer()</code> which takes same arguments <code>socket_create()</code> does:
+<pre lang="php">
+$server = new SocketServer(AF_INET, SOCK_STREAM, SOL_TCP);
+</pre>
+
+After that we need to <code>setHandler()</code>, <code>bind()</code> socket and <code>run()</code> server:
+<pre lang="php">
+$motd   = 'WELCOME TO THE SIMPLE SOCKET SERVER IN PHP' . "\n"
+        . '------------------------------------------' . "\n";
+$server -> bind('0.0.0.0', 12345);
+$server -> setMotd($motd);
+$server -> setHandler('my_handler');
+$server -> run();
+</pre>
+
+Also you can set a welcome message with <code>setMotd()</code> method:
+<pre lang="php">
+$motd   = 'WELCOME TO THE SIMPLE SOCKET SERVER IN PHP' . "\n"
+        . '------------------------------------------' . "\n";
+$server -> setMotd($motd);
+</pre>
+
+Of course it can be done with chaining, as <code>setHandler()</code> and <code>bind()</code> are returning self reference:
+<pre lang="php">
+$motd   = 'WELCOME TO THE SIMPLE SOCKET SERVER IN PHP' . "\n"
+        . '------------------------------------------' . "\n";
+$server -> bind('0.0.0.0', 12345)
+        -> setMotd($motd)
+        -> setHandler('my_handler')
+        -> run();
+</pre>
+
+On any error, Exception will be thrown. So you can use try-catch to display exception's message (e.g. <code>$e->getMessage()</code>) and return corresponding error code. Now it's time to combine all pieces in one place:
+<pre lang="php">
+< ?php
+/**
+ * SocketServer
+ *
+ * This file is part of SocketServer.
+ *
+ * SocketServer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SocketServer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with SocketServer. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @package SocketServer
+ * @link http://blog.ixti.ru/?p=107 Socket reader in PHP. Second part
+ * @copyright Copyright (c) 2009 Aleksey V. Zapparov AKA ixti <http ://ixti.ru/>
+ * @license http://www.gnu.org/licenses/ GPLv3
+ */
+
+
+/**
+ * SocketServer
+ */
+require_once 'SocketServer.php';
+
+
+// Handler function
+function my_handler($request)
+{
+    if (1 === preg_match('/quit|exit/i', $request)) {
+        return null;
+    }
+
+    if (1 === preg_match('/stop|halt/i', $request)) {
+        return false;
+    }
+
+    return md5($request) . PHP_EOL;
+}
+
+
+try {
+    $motd   = 'WELCOME TO THE SIMPLE SOCKET SERVER IN PHP' . "\n"
+            . '------------------------------------------' . "\n";
+    $server = new SocketServer(AF_INET, SOCK_STREAM, SOL_TCP);
+    $server ->bind('0.0.0.0', 12345)
+            ->setMotd($motd)
+            ->setHandler('my_handler')
+            ->run();
+    exit(0);
+} catch (Exception $e) {
+    fwrite(STDERR, $e->getMessage() . PHP_EOL);
+    exit(1);
+}
+</pre>

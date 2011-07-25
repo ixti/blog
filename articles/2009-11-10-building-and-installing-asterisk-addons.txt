@@ -1,0 +1,38 @@
+---
+title: Build­ing and installing asterisk-addons
+author: Aleksey V Zapparov AKA ixti
+date: 10/11/2009
+category: asterisk
+tags: add-on, mysql, odbc
+
+Once upon a time I've dist-upgraded Debian GNU/Linux "Etch" with some extra repositories, found that asterisk failed to start because of MySQL connection:
+<pre>
+asterisk: relocation error: /usr/lib/odbc/libmyodbc.so: \
+    symbol mysql_odbc_escape_string, version libmysqlclient_15 \
+    not defined in file libmysqlclient_r.so.15 with link time reference
+</pre>
+I was using ODBC to authenticate After <a href="http://www.google.com/search?q=%2Fusr%2Flib%2Fodbc%2Flibmyodbc.so%3A+symbol+mysql_odbc_escape_string%2C+version+libmysqlclient_15+not+defined+in+file+libmysqlclient_r.so.15+with+link+time+reference">googling</a> I figured out that it seems like nobody's going to fix this problem. So I've decided to install <a href="http://www.google.com/search?q=asterisk-addons">asterisk-addons</a> to switch to <code>res_mysql</code>...
+
+~
+
+
+Of course the most straight decision was to upgrade MySQL client to make my <code>res_odbc</code> work again. And, in fact, I've tried this way, but as it involved upgrading of too many things, and as it was too risky to make such changes on that server I've decided just to install <i>asterisk-addons</i>. Also, on that server asterisk was using MySQL only for SIP users' authentication and had only one macro with query to the database. So fixing of dialplan was not a big deal.
+
+So I've <a href="http://downloads.asterisk.org/pub/telephony/asterisk/">downloaded latest asterisk-addons</a>, unpacked them, ran <code>./configure</code> and tried to compile, but something went wrong:
+<pre>
+$ make
+menuselect/menuselect --check-deps   menuselect.makeopts
+Generating embedded module rules ...
+make[1]: Nothing to be done for `all'.
+   [CC] app_addon_sql_mysql.c -> app_addon_sql_mysql.o
+app_addon_sql_mysql.c:19:22: error: asterisk.h: No such file or directory
+...
+make[1]: *** [app_addon_sql_mysql.o] Error 1
+make: *** [apps] Error 2
+</pre>
+
+After I spent some time trying to figure out what's going on, I found <a href="http://ibot.rikers.org/%23asterisk/20080925.html.gz">chat logs</a> where I found the solution. In fact I've found not only solution, but an idea where to got everything needed to fix my problem :)) So now I'll never forget to look at <code>./configure --help</code> before I'll start googling. And solution for me was very easy :)) <i>asterisk-addons</i> simply wanted to know where I have installed asterisk. And as I've installed asterisk with <code>--prefix=/home/asterisk</code> all I had to do is to specify <code>--with-asterisk=/home/asterisk</code>:
+<pre lang="bash">
+$ ./configure --prefix=/home/asterisk \
+              --with-asterisk=/home/asterisk
+</pre>

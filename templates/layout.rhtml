@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Private scratchpad with public access">
+  <meta name="author" content="<%= @config[:author] %>">
+  
+  <title><%= title %></title>
+  
+  <!-- Hey hacker! You can use direct Atom Feed: <%= @config[:url] %>/index.xml -->
+  <link rel="alternate" type="application/atom+xml" title="<%= title %> - Feed" href="http://feeds.feedburner.com/ixti">
+  <link rel="alternate" type="text/html" title="Sources" href="https://github.com/ixti/blog">
+  <link rel="license" type="text/plain" title="GNU/GPLv3" href="/LICENSE">
+  
+  <link rel="stylesheet" type="text/css" href="/css/application.css">
+</head>
+<body>
+  <div id="container">
+    <div id="main">
+      <header id="header" role="banner">
+        <h1 id="title"><a href="/"><%= @config[:title] %></a></h1>
+        <div id="moto">Private scratchpad with public access</div>
+        <img src="/images/header.jpg" title="Olta montain, Calpe, Spain 2010">
+      </header>
+
+      <div id="content" role="main">
+        <%= yield %>
+      </div>
+
+      <hr />
+
+      <footer id="footer" role="navigation">
+        <section id="tags-cloud">
+          <h2>Tags</h2>
+          <% for nube in tags_cloud.snowball %>
+            <a href="<%= nube.path %>" class="nube-<%= nube.weight %>"
+               title="<%= nube.count %> article(s) tagged with <%= nube.slug %>"><%= nube.title %></a>
+          <% end %>
+        </section>
+
+        <section>
+          <h2>Archives</h2>
+          <% for year in @articles.map{|a| a.date.split('/').slice(-1).to_i }.uniq.sort.reverse %>
+            <a href="/<%= year %>"><%= year %></a>
+          <% end %>
+        </section>
+      </footer>
+    </div>
+
+    <footer id="copyrights" role="contentinfo">
+      proudly powered by <a href="http://cloudhead.io/toto">toto</a>
+      ~
+      humbly designed by <a href="http://blog.ixti.ru/">ixti</a>
+      using <a href="http://html5boilerplate.com/">HTML5 Boilerplate</a>,
+      <a href="http://gimp.org/">Gimp</a>
+      and <a href="http://www.vim.org/">Vim</a>
+      ~
+      unless otherwise noted, all published source codes and applications
+      are made available under terms of <a href="/LICENSE">GNU/GPLv3</a>
+      ~
+      copyright &copy; 2009 Aleksey V Zapparov AKA ixti
+    </footer>
+  </div>
+</body>
+</html>

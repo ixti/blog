@@ -1,0 +1,21 @@
+---
+title: Run­ning XDe­bug pro­filer from CLI
+author: Aleksey V Zapparov AKA ixti
+date: 18/10/2009
+category: development
+tags: cli, debugging, php, xdebug
+
+If you are coding in PHP, you may know about <a href="http://www.google.com/search?q=Zend+Debugger">Zend Debugger</a> and probably <a href="http://www.xdebug.org/">Xdebug</a>. I'm using second one. And there are a lot of articles of how to run Xdebug. And all of them are concerned with editing of php.ini file. But what if you need to profile only one script? The easiest way is to pass a configuration right in the command line with <code>-d</code> argument.
+
+~
+
+
+So not far ago I needed to profile one script, which will be published in future post :)) because it was wasting 100% of CPU. So i needed to put <code>xdebug.profiler_enable=on</code> and <code>xdebug.profiler_output_dir=/tmp</code> directives. Of course I could place it into php.ini, but placing it there and then commenting out again seems like waste of time for me. So I think it better to run passing such directives as CLI arguments, liike this:
+<pre>
+$ php -d xdebug.profiler_enable=on -d xdebug.profiler_output_dir=/tmp filename.php
+</pre>
+
+<ins datetime="2010-03-25T17:55:55+00:00">UPD[2010/03/25]:</ins> In fact only <code>xdebug.profiler_enable</code> is required, and <code>xdebug.profiler_output_dir</code> has default value set to <i>/tmp</i>. So example above is equal to:
+<pre>
+$ php -d xdebug.profiler_enable=on filename.php
+</pre>

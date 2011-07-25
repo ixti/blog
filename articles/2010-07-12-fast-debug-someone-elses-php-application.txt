@@ -1,0 +1,56 @@
+---
+title: Fast debug someone else's PHP application
+author: Aleksey V Zapparov AKA ixti
+date: 12/07/2010
+category: development/howto
+tags: logging, php, tip, tracing
+
+Sometimes you need to make a small fix to someone's code (e.g. you are hacking existing application). And unfortunately 85% times you'll meet strange bugs. Most of such bugs are because of unexpected "input", e.g. you expect that variable should be string <code>abc</code> while in fact it's integer <code>123</code>. So to check what was "received" you'll want to output it's value somewhere. But (!) in 90% of times there will be NO logging system in application at all, or it will be as usefull as nothing...
+
+~
+
+
+Of course you can spend some time and connect your own logging system. But do you really think someone will thank you for this? Nope. If it's not an application you are going to support long time and nobody 's going to pay for such improvement, there's no such need. So what you can do? For CLI application, you can simply use <em>STDOUT</em> or <em>STDERR</em> to output some info there:
+
+~~~ php
+fwrite(STDERR, '$var is: ' . $var);
+```
+
+In fact it will help even with web application, at least if you know where error log is placed in the system and if it's enabled. But there's more robust and easier way - <code>syslog()</code>:
+
+~~~ php
+syslog(LOG_DEBUG, '$var is: ' . $var);
+```
+
+This will write a message into your system log (which is the most easy to find place) with DEBUG priority. And here's little bit more complex but very useful snippet with output buffer control and <code>syslog()</code> functions:
+
+~~~ php
+ob_start();
+var_dump($var);
+syslog(LOG_DEBUG, ob_get_clean());
+```
+
+But don't forget that <code>syslog()</code> has limited length of message. :)) And in fact it's really not the best place for such output so you should use it only for one-two times check - don't forget to wipe out it from application once you'll got what you wanted :))
+
+And finally here's one helping thing. When you need to figure out call trace of application's request, you can use powerfull PHP debugger - <a href="http://www.xdebug.org/">XDebug</a>. It has special mode in which it will trace every function/method call. To use it you might want to enable it from within CLI:
+```
+$ php -d xdebug.auto_trace=1 test.php
+```
+
+By default (if you have not configured tracing of XDebug) it will create a file under <code>/tmp</code> with file named something like this: <em>trace.180077614.xt</em>. File is really easy to read. So for example let's say we have <em>test.php</em> with following content:
+
+~~~ php
+<?php
+syslog(LOG_DEBUG, 'test');
+echo 'boo';
+```
+
+For this file trace will be like this:
+```
+TRACE START [2010-07-12 13:14:55]
+    0.0004     320332   -> {main}() /tmp/test.php:0
+    0.0198     320496     -> syslog() /tmp/test.php:2
+    0.0205       8252
+TRACE END   [2010-07-12 13:14:56]
+
+~~~ 

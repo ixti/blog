@@ -1,0 +1,70 @@
+---
+title: Another step for free­dom of CRE Loaded PCI Pro
+author: Aleksey V Zapparov AKA ixti
+date: 08/06/2010
+category: oscommerce
+tags: cre-loaded, freedom, gpl, php
+
+This is a small improvement to previously released <a href="http://blog.ixti.ru/?p=343">free version</a> of <a href="http://www.creloaded.com/">CRE Loaded PCI Pro</a>. After I was playing with previous release I found that (at least) after upgrading from another version this application sends an information about your web-site at <em>sales@creloaded.com</em> and <em>application@cremerchant.com</em> which is not cool at all. So here's another modified version of CRE Loaded PCI Pro which is not only free as in freedom, but also does not spies for you...
+
+~
+
+
+Basically all you need to do is to remove a "spy" block out of <em>admin/merchant_account.php</em> file. Here's a patch you can use to clean it out:
+
+~~~ patch
+29,79d28
+< 
+< $action = (isset($_GET['action']) ? $_GET['action'] : '');
+<   
+< $error = false;
+< if (isset($action) &amp;&amp; ($action == 'send')) {
+< 
+< $company = tep_db_prepare_input($_POST['company']);
+< $full_name = tep_db_prepare_input($_POST['full_name']);
+< $telephone = tep_db_prepare_input($_POST['telephone']);
+< $nightphone = tep_db_prepare_input($_POST['nightphone']);
+< $country_id = tep_db_prepare_input($_POST['country_id']);
+< $country = tep_get_country_name($country_id);
+< $email_address = tep_db_prepare_input($_POST['email_address']);
+< $businessyears = tep_db_prepare_input($_POST['businessyears']);
+< $website = tep_db_prepare_input($_POST['website_url']);
+< $processing = tep_db_prepare_input($_POST['processing']);
+< $start_processing = tep_db_prepare_input($_POST['start_processing']);
+< $comments = tep_db_prepare_input($_POST['comments']);
+< 
+< if($company == '' || $full_name == '' || $telephone == '' || $website == '' || !tep_validate_email($email_address) || $full_name == 'Salvatore Iozzia' || $company == 'CRE Loaded Store' || $email_address == 'noreply@creforge.com') {
+< $error = true;
+< }
+< 
+< if(!$error) {
+< //all good send
+< $message = '';
+< $message = "\n\n" . sprintf(TEXT_EMAIL_BODY_TITLE,$full_name) . "\n\n" .
+< TEXT_COMPANY_NAME . ' ' . $company . "\n" .
+< TEXT_FULL_NAME . ' ' . $full_name . "\n" .
+< TEXT_TELEPHONE . ' ' . $telephone . "\n" .
+< TEXT_NIGHT_PHONE . ' ' . $nightphone . "\n" .
+< TEXT_COUNTRY . ' ' . $country . "\n" .
+< TEXT_EMAIL_ADDRESS . ' ' . $email_address . "\n" .
+< TEXT_YEARS_IN_BUSINESS . ' ' . $businessyears . "\n" . 
+< TEXT_WEBSITE . ' ' . $website . "\n" . 
+< TEXT_PROCESSING . ' ' . $processing . "\n" .
+< TEXT_START_PROCESSING . ' ' . $start_processing . "\n" .
+< TEXT_COMMENTS . "\n" . cre_html2txt($comments) . "\n" . 
+< CREM_EMAIL_SEPERATOR . "\n\n" . 
+< TEXT_CUSTOMER_IP . $_SERVER['REMOTE_ADDR'] . "\n" . 
+< TEXT_CUSTOMER_ISP . gethostbyaddr($_SERVER['REMOTE_ADDR']) . "\n";
+< 
+< @tep_mail(TEXT_SEND_TO_NAME, 'sales@creloaded.com', sprintf(TEXT_EMAIL_SUBJECT,$full_name), $message, $full_name, $email_address);
+< @tep_mail(TEXT_SEND_TO_NAME, 'application@cremerchant.com', sprintf(TEXT_EMAIL_SUBJECT,$full_name), $message, $full_name, $email_address);
+< 
+< }
+< 
+< } // end action
+< 
+<   if($error) $messageStack->add('merchant', TEXT_ALL_FIELDS_REQUIRED, 'warning');
+<   
+```
+
+PS If you have bought a new version CRE Loaded PCI Pro or B2B and want to bring freedom (and justice) back - just send me the distro package and I'll help ;))

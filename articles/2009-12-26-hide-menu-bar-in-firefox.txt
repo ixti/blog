@@ -1,0 +1,20 @@
+---
+title: Hide menu bar in FireFox
+author: Aleksey V Zapparov AKA ixti
+date: 26/12/2009
+category: firefox/howto
+tags: css, plug-in, stylish
+
+After I tried <a href="http://www.google.com/search?q=google+chrome">Google Chrome(tm)</a> I realized that I really don't need menu bar all the time I use browser. Of course the fastest way to extend useful space of browser is to use <a href="http://vimperator.org/vimperator">Vimperator</a> extension. But if you are not familiar with vim you can use alternative way...
+
+~
+
+
+First solution is to use <a href="https://addons.mozilla.org/en-US/firefox/addon/4762">Hide Menubar</a> extension. But by some reason it was freezing my browser for about 10-20 seconds every time I tried to display menu back (with <code>Alt</code> key). Then I found a solution how to permanently disable menubar at <a href="http://www.aqua-soft.org/forum/index.php?showtopic=36979">aquasoft forum</a>. But I don't want to completely block menubar as sometimes I need it - so I found the easy solution.
+
+I guess everyone knows about <a href="https://addons.mozilla.org/en-US/firefox/addon/2108">Stylish</a> Firefox(tm) extension. So, all you have to do is to create a new blank style in Stylish. Call it whatever you like, e.g. <i>Hide menu bar</i> and add content:
+<pre lang="css">
+#toolbar-menubar { display: none !important; }
+</pre>
+
+That's all. Usage is very easy. When you want to hide menu bar - you have to simply enable that style in stylish. To show it back - disable. Hope this will help you :))

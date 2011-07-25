@@ -1,0 +1,15 @@
+<section id="articles">
+  <% for article in articles[0...5] %>
+    <article class="post">
+      <header>
+        <h2><a href="<%= article.path %>"><%= article.title %></a></h2>
+        <div class="extra"><%= article.date %></div>
+      </header>
+
+      <section class="content">
+        <%= article.summary %>
+      </section>
+      <div class="more"><a href="<%= article.path %>">read on &raquo;</a></div>
+    </article>
+  <% end %>
+</section>

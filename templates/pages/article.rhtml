@@ -1,0 +1,21 @@
+<article class="post">
+  <header>
+    <div class="path">guest@blog.ixti.ru:~/<%= keys.include?(:category) ? category : '' %>$</div>
+    <h2><%= title %></h2>
+    <div class="extra">Posted on <%= date %> and tagged with <%= tags.collect{|t| "<a href='#{t.path}'>#{t.title}</a>"}.join(', ') %></div>
+  </header>
+
+  <section class="content">
+    <%= body %>
+  </section>
+
+  <% if @config[:disqus] %>
+  <section class="comments">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript" src="http://disqus.com/forums/<%= @config[:disqus] %>/embed.js"> </script>
+    <noscript><a href="http://<%= @config[:disqus] %>.disqus.com/?url=ref">View the discussion thread.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+  </section>
+  <% end %>
+</article>
+

@@ -1,0 +1,23 @@
+---
+title: My desktop decorations
+author: Aleksey V Zapparov AKA ixti
+date: 25/09/2010
+category: themes
+tags: 
+
+I dislike desktop environment usage, as I really don't need anything except I need. And my needs are much more less than well-known desktop environments provides. :)) So my desktop environment consist of <a href="http://openbox.org/">OpenBox3</a> and <a href="http://code.google.com/p/tint2/">Tint2</a>. So after some time of using standard OpenBox3 theme and tiny modified tint2rc, I have prepared my own OpenBox3 themes (one dark and one light) as all standard themes were too colourful.
+
+~
+
+
+I totally dislike all those gradients and bevels and do not understand all those strange attempts to make 2D things looks like 3D. So if you dislike flat things, these themes are probably not for you, they are really simple :)) To give an idea how they looks like, here are few screenshots:
+
+<strong>SimplyGrey</strong>
+<a href="http://blog.ixti.ru/wp-content/uploads/2010/09/simplygrey.png"><img src="http://blog.ixti.ru/wp-content/uploads/2010/09/simplygrey-1024x640.png" alt="" title="simplygrey" width="640" height="400" class="aligncenter size-large wp-image-679" /></a>
+
+<strong>SimplyGreyLight</strong>
+<a href="http://blog.ixti.ru/wp-content/uploads/2010/09/simplygreylight.png"><img src="http://blog.ixti.ru/wp-content/uploads/2010/09/simplygreylight-1024x640.png" alt="" title="simplygreylight" width="640" height="400" class="aligncenter size-large wp-image-678" /></a>
+
+To be honest I don use window decorations at all, so on screenshots they are provided just to give a complete "picture" of themes :)) Hope you'll like them, at least I do ;))
+
+Both <a href="http://box-look.org/content/show.php/SimplyGrey?content=132992">SimplyGrey</a> and <a href="http://box-look.org/content/show.php?action=content&content=132993">SimplyGreyLight</a> are available at <a href="http://box-look.org/">box-look.org</a>.

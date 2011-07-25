@@ -1,0 +1,17 @@
+---
+title: First real-working release of redmine_tags
+author: Aleksey V Zapparov AKA ixti
+date: 13/02/2011
+category: redmine
+tags: add-on, gpl, issue, plug-in, ruby, tagging
+
+Woo-hoo! Finally I've did it. It really works now. And I have implemented all the things I wanted to have before saying loud about release. Now I can. This release was tested with all: PostgreSQL 8<ins datetime="2011-04-09T11:52:43+00:00">.4</ins>.5, SQLite3 and MySQL 5. All minor bugs were fixed, so I hope those of you who will try it won't get disappointed. So what you'll get by installing this plugin?..
+~
+
+
+Below you'll find some screenshots and plugin's package. Alternatively you can grab it from <a href="https://github.com/ixti/redmine_tags/tree/v.1.1.0">github</a>. If any issues feel free to report them on github - still have no time to set up issue tracking on my new server.
+
+Seems like I have forgot installation instructions but they are dead simple. All you have to do is to install <a href="https://github.com/mbleigh/acts-as-taggable-on">acts-as-taggable-on</a> gem and then install this plugin. Please refer to the redMine manual about <a href="http://www.redmine.org/projects/redmine/wiki/Plugins">plugins installation</a>.
+
+So, what's next? Next, I'm going to extend this plugin to add tags to wiki pages and forum threads, as well as develop it as a core plugin of <a href="https://www.chiliproject.org/">ChiliProject</a>, once <a href="https://www.chiliproject.org/issues/139">the issue</a> will be ready for review. Also I have a plan to make a best (at least in my opinion) plugin for invoices.
+

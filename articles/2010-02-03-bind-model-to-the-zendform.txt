@@ -1,0 +1,121 @@
+---
+title: Bind model to the Zend_Form…
+author: Aleksey V Zapparov AKA ixti
+date: 03/02/2010
+category: zend-framework
+tags: model, orm, php, zend_form
+
+In my <a href="/?p=261">previous post</a> I have described how to fill model with values from the <code>Zend_Form</code>. But reverse process is also very important. If you are using <code>Zend_Db_Table</code> you probably will not need any special methods as you can use <code>Zend_Form::setDefault($array)</code> built-in method. But if you are working with <a href="http://www.doctrine-project.org/">Doctrine ORM</a> or something similar you'll need to use your own method to read model's data and put it into the form. So today I'm going to show how to populate field values of <code>Zend_Form</code> from model. With traditional example application :))
+
+~
+
+
+I will use the same element bindings as in previous post about binding <code>Zend_Form</code> to the model. So if you didn't read previous post, please read it first just to understand where bindings are got from. For those of you who read it before I will remind it a little. We defined a protected property <code>$_binding</code> for our <code>My_Form</code> class which stores a hash of <code>'element_name' => array('model_property_name', 'callback')</code>. So we'll base on top of code from previous post.
+
+OK. This post will be much shorter than previous one :)) First of all I have defined a helper method to prepare a value by it's path:
+
+~~~ php
+class My_Form
+{
+    // ...
+
+    /**
+     * Gets value of node specified by path
+     *
+     * @param  array $array
+     * @param  mixed $path
+     * @return mixed
+     */
+    protected function _getValueByPath($array, $path)
+    {
+        list($curr, $path) = (array) $path;
+        return (null !== $path)
+            ? $this->_getValueByPath($array[$curr], $path)
+            : $array[$curr];
+    }
+
+    // ...
+}
+```
+
+This method is a complimentary for the <code>_setValueByPath()</code> from previous post, so you can look it's discussion to understand why this method was needed. Now, the main part of this post - the reader method:
+
+~~~ php
+class My_Form
+{
+    // ...
+
+    /**
+     * Set values of form elements with corresponding model properies.
+     *
+     * @param  Doctrine_Record $model
+     * @return My_Form self-reference
+     */
+    public function read(Doctrine_Record $model)
+    {
+        foreach ($this->getElements() as $name => $element) {
+            if ( ! array_key_exists($name, $this->_bindings)) {
+                continue;
+            }
+
+            list($prop, $path) = (array) $this->_bindings[$name];
+
+            $value = (null !== $path)
+                   ? $this->_getValueByPath($model->$prop, $path)
+                   : $model->$prop;
+
+            $element->setValue($value);
+        }
+
+        return $this;
+    }
+
+    // ...
+}
+```
+
+For those of you who use <code>Zend_Db_Table</code> and by some reason can't use built-in <code>Zend_Form::setDefaults()</code> I have prepared similar method for using with arrays:
+
+~~~ php
+class My_Form
+{
+    // ...
+
+    /**
+     * Reads array of $data setting corresponding element's values
+     *
+     * Same as {@link My_Form::read()} but reads an array of data.
+     *
+     * @param  array $data
+     * @return My_Form self-reference
+     */
+    public function setModelData($data)
+    {
+        foreach ($this->getElements() as $name => $element) {
+            if ( ! array_key_exists($name, $this->_bindings)) {
+                continue;
+            }
+
+            list($prop, $path) = (array) $this->_bindings[$name];
+
+            if ( ! array_key_exists($prop, $data)) {
+                continue;
+            }
+
+            $value = (null !== $path)
+                   ? $this->_getValueByPath($data[$prop], $path)
+                   : $data[$prop];
+
+            $element->setValue($value);
+        }
+        
+        return $this;
+    }
+
+    // ...
+}
+```
+
+That's all. I guess there's no need to describe every single char as I think everything is clear more then enough. Anyway if you have any questions - fell free to ask.
+
+<ins datetime="2010-03-08T22:30:30+00:00"><b>UPD [2010/03/08]</b> Fixed small typo.</ins> 

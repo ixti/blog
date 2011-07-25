@@ -1,0 +1,141 @@
+---
+title: Sys­tem tray icon with Ruby and QT4
+author: Aleksey V Zapparov AKA ixti
+date: 23/06/2010
+category: development/howto
+tags: notification, qt, ruby, status, tray, x-server
+
+In my previous post I have showed how to create a simple system tray icon in ruby and GTK. Today, I will create exactly the same application but with QT4 instead of GTK... Before I started this, I was full of optimism that it will be even easier to do this with QT. I was wrong :)) Because of some differences it was not as easy as I wished it to be...
+
+~
+
+
+I was going to start with similar simple and really dumb example. But some restrictions of QT disallowed me. So, to show a system tray icon, you need to call <code>show</code> instance method. But before this, you must set <code>icon</code> instance property, else it will throw a corresponding exception. So here's most simple variant:
+
+~~~ ruby
+require 'Qt4'
+app = Qt::Application.new(ARGV)
+si  = Qt::SystemTrayIcon.new
+
+si.icon = Qt::Icon.new('/path/to/some/image.png')
+si.show
+
+app.exec
+```
+
+There's no stock images like in GTK, at least I didn't found them, if you know - let me know. According to QT's SDK there's <code>QIcon::fromTheme()</code> static method, but unfortunately there's no corresponding one in qt4ruby. So we can skip step with different types of icon image settings and go next. All snippets below will assume that there are <code>app</code> and <code>si</code> initializations before, and <code>app.exec</code> call after them. Now let's make our icon start|stop blinking on left click.
+
+In QT all clicks (left, middle, right, etc) are handled by one signal - <code>activated(QSystemTrayIcon::ActivationReason)</code>. Not the easiest name of the signal to remember ;)) I spent about two hours trying to understand why SDK says that <code>QStatusIcon</code> has <code>activated()</code> signal, but my app tells me that there's no such signal. Anyway, finally I got it. Here's sample <code>activated()</code> signal handler:
+
+~~~ ruby
+si.connect(SIGNAL('activated(QSystemTrayIcon::ActivationReason)')) do |reason|
+  case reason
+    when Qt::SystemTrayIcon::Trigger:       puts 'Left Click'
+    when Qt::SystemTrayIcon::MiddleClick:   puts 'Middle Click'
+    when Qt::SystemTrayIcon::Context:       puts 'Right Click'
+    when Qt::SystemTrayIcon::DoubleClick:   puts 'Double Click'
+    else
+  end
+end
+```
+
+There's also <code>Qt::SystemTrayIcon::Unknown</code> reason but this is not very useful IMHO. After we figured out how and where we need to handle left click, let's make icon blinking. You probably will be surprised, but it's not trivial as with GTK. <code>Qt::SystemTrayIcon</code> don't have neither <code>blinking</code> instance property, nor any single method to make it blink. So to make icon blink we need to create a timer which will be replacing icon with empty one and restore original back again every 0.5 second:
+
+~~~ ruby
+# define standard icon, alternative (blank) one and current state handler
+std_icon = Qt::Icon.new('/path/to/some/image.png')
+alt_icon = Qt::Icon.new
+blinking = false
+
+# assign default icon
+si.icon  = std_icon
+si.show
+
+# run timer to swap icons every 0.5 second if blinking is true
+Qt::Timer.new(app) do |timer|
+  timer.connect(SIGNAL('timeout()')) do
+    si.icon = (si.icon.isNull ? std_icon : alt_icon) if blinking
+  end
+  timer.start(500)
+end
+
+# finally assign left click handler
+si.connect(SIGNAL('activated(QSystemTrayIcon::ActivationReason)')) do |reason|
+  if Qt::SystemTrayIcon::Trigger == reason
+    blinking = !blinking
+    si.icon  = blinking ? alt_icon : std_icon
+  end
+end
+```
+
+OK. It was not as easy as with GTK, but still, it works :)) So now let's create context menu with exit item. First of all we need to create a <code>Qt::Menu</code> and populate it with <code>Qt::Action</code>s:
+
+~~~ ruby
+menu = Qt::Menu.new
+quit = Qt::Action.new('&amp;Quit', menu)
+
+quit.connect(SIGNAL(:triggered)) { app.quit }
+menu.addAction(quit)
+```
+
+And now the most interesting part, as I told before QT's system tray icon handles all clicks by one signal. But for context pop-up menu there's a special instance property <code>contextMenu</code> exist. So to show a popup menu you need to assign it with <code>menu</code> so it will be popped up on right click! But remember, <code>activated(QSystemTrayIcon::ActivationReason)</code> will also be handled. So following code will pop up a menu and will output <em>Right Click</em> to the console:
+
+~~~ ruby
+si.contextMenu = menu
+
+si.connect(SIGNAL('activated(QSystemTrayIcon::ActivationReason)')) do |reason|
+  if Qt::SystemTrayIcon::Contex == treason
+    puts 'Right Click'
+  end
+end
+```
+
+And now altogether again:
+
+~~~ ruby
+require 'Qt4'
+
+app = Qt::Application.new(ARGV)
+si  = Qt::SystemTrayIcon.new
+
+std_icon = Qt::Icon.new('/path/to/some/image.png')
+alt_icon = Qt::Icon.new
+blinking = false
+
+si.icon  = std_icon
+si.show
+
+Qt::Timer.new(app) do |timer|
+  timer.connect(SIGNAL('timeout()')) do
+    si.icon = (si.icon.isNull ? std_icon : alt_icon) if blinking
+  end
+  timer.start(500)
+end
+
+menu = Qt::Menu.new
+quit = Qt::Action.new('&amp;Quit', menu)
+
+quit.connect(SIGNAL(:triggered)) { app.quit }
+menu.addAction(quit)
+
+si.contextMenu = menu
+
+si.connect(SIGNAL('activated(QSystemTrayIcon::ActivationReason)')) do |reason|
+  case reason
+    when Qt::SystemTrayIcon::Trigger
+      blinking = !blinking
+      si.icon  = blinking ? alt_icon : std_icon
+    when Qt::SystemTrayIcon::MiddleClick:   puts 'Middle Click'
+    when Qt::SystemTrayIcon::Context:       puts 'Right Click'
+    when Qt::SystemTrayIcon::DoubleClick:   puts 'Double Click'
+  end
+end
+
+app.exec
+```
+
+<strong>Useful links</strong><ol>
+<li><a href="http://rubyforge.org/projects/korundum/">qt4ruby homepage</a> - packages contains good examples</li>
+<li><a href="http://techbase.kde.org/Development/Tutorials/Qt4_Ruby_Tutorial">Qt4 Ruby Tutorial</a></li>
+<li><a href="http://stackoverflow.com/questions/313629/worker-threads-in-ruby">Qt::Timer example</a></li>
+</ol>

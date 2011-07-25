@@ -1,0 +1,119 @@
+---
+title: Execute com­mand out­side chroot without leav­ing it. Part 1 — Idea.
+author: Aleksey V Zapparov AKA ixti
+date: 08/09/2009
+category: administration/development/ideas
+tags: chroot, php, tools
+
+Not so far ago I wrote about <a href="?p=16">sending faxes from chroot</a>. It was a dummy scratch. Just to show how it can be done. But on practice I need not only to send faxes, but to get their statuses. Of course it can be done via the same idea shared in that post, so you'll receive some kin of two-ways watch-dir... Maybe it's OK, but, for me status check should be done immediately as I ask.
+
+~
+
+
+So I decided to write some kind of daemon who will reside outside chroot but be able to receive commands from chroot and reply back. So according to the situation of <a href="http://www.ixti.ru/?p=16">previous post</a> I have:
+
+<ul>
+	<li><em>Apache</em> server which is run from <strong>httpd</strong> user and chrooted into <code>/var/www</code></li>
+	<li><strong>asterisk</strong> user who is not chrooted :))</li>
+</ul>
+
+Now all we need is to create a named pipe (FIFO channel) in the directory <em>Apache</em> can access (somewhere under <code>/var/www</code>) and "listen" it with our daemon. Quick copy-paste'n'run tutorial on PHP and named channels can be found on <a href="http://my.opera.com/zomg/blog/2007/08/29/php-and-named-pipes">Jani's blog @opera</a>.
+
+Yes. Daemon in python looks great. Few line of code and working. But my manager is against the language-zoo per project. Also he told me that I have to write daemon in PHP at least because of other guys in web-development department of Russian Informational Technologies, Ltd. should be able to support this daemon without asking me or reading Python's reference manual or Ruby book (I wish I was allowed to write it in Ruby). :))
+
+So the idea of command execution via this daemon is:
+<ol>
+	<li>Daemon creates FIFO channel and starts monitor it for incoming commands</li>
+	<li>Chrooted PHP writes command to FIFO channel</li>
+	<li>Upon daemon received a message it do something and produces output</li>
+</ol>
+
+Very simple. But beware! Do not allow simply execute everything passed to the FIFO channel. Verify every line passed is it allowed to run or not, or you'll be under very high risk. So here's my first idea-stage variant of such daemon:
+
+<pre lang="php">
+#!/usr/bin/php
+< ?php
+
+$basedir   = '.';
+$fifo_file = $basedir . DIRECTORY_SEPARATOR . 'ctl.fifo';
+
+//
+// Remove FIFO if exists and throw an Exception upon failure.
+if (is_file($fifo_file) && false === unlink($fifo_file)) {
+    throw new Exception('FIFO channel already exists and can\'t be removed.');
+}
+
+//
+// Create and open FIFO
+posix_mkfifo($fifo_file, 0644); // Create FIFO
+chmod($fifo_file, 0660);        // Grant only rw access for owner and group
+$fifo = fopen($fifo_file, 'r'); // Open FIFO
+
+//
+// Helper to output errors
+function error($msg)
+{
+    fwrite(STDERR, sprintf('[%s] ERROR %s', time(), $msg) . PHP_EOL);
+}
+
+//
+// Sample command handler
+function __do_echo($out, $arg)
+{
+    $result = sprintf('ECHO: $out=>"%s"', $out) . PHP_EOL
+            . sprintf('ECHO: $arg=>"%s"', $arg) . PHP_EOL;
+    echo $result;
+}
+
+//
+// Daemon loop cycle
+while (true) {
+    $data  = ltrim(fread($fifo, 1024));
+
+    // Skip strings without leading >>> and empty lines
+    if (0 !== strpos($data, '>>>') || 0 === strlen(trim($data))) {
+        continue;
+    }
+
+    // Remove >>> from the beginning and explode string by spaces
+    $data = explode(' ', trim(substr($data, 3)));
+
+    // At least two arguments should be passed
+    if (2 > count($data)) {
+        error('Command should be in format: >>> CMD OUT [ARGS]');
+        var_dump($data);
+        continue;
+    }
+
+    // Prepare function name of command handler.
+    // E.g. ECHO will be handler by __do_echo() function
+    $cmd_func = '__do_' . strtolower(array_shift($data));
+    if ( ! function_exists($cmd_func)) {
+        error('Command handler not found');
+        continue;
+    }
+
+    // Call command handler passing it OUT resource and optional CMD argument
+    $cmd_func(array_shift($data),
+              ((0 != count($data)) ? implode(' ', $data) : null));
+}
+</pre>
+
+That's it. A little more lines of code than in Python's sample of Jani, but this also do some more things ;))
+
+So as you can see, this daemon ignores all empty lines and lines that do not have <code>>>></code> prefix. So command has format <code>>>> CMD OUT [ARGS]</code>.
+<ul>
+	<li><b>CMD</b> - Command name (e.g. ECHO) to be executed. Command will be executed by command handler which is lowered command name with prefix '__do_' (e.g. __do_echo)</li>
+	<li><b>OUT</b> - In this example it's not used, but I placed it for future command handlers. It's needed to tell daemon where he should output result of command execution (e.g. /tmp/unique_id.out)</li>
+	<li><b>ARGS</b> - Optional command arguments (also placed for real-world purposes) :))</li>
+</ul>
+
+To test how it works you can open two terminals (I use <a href="">screen</a> for this purposes). Then run daemon in one of them and execute `<code>>>> ECHO "echo unique_id.out" > ctl.fifo</code>` in another, this will reproduce something like this:
+
+<pre>
+$ ./ctl.php
+ECHO: $out=>"unique_id.out"
+ECHO: $arg=>""
+</pre>
+
+I repeat: THIS IS JUST AN IDEA. So if you have some thoughts or critics, feel free to comment :)) I'll appreciate all your comments :))

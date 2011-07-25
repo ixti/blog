@@ -1,0 +1,64 @@
+---
+title: Send­ing faxes with hyla­fax from chrooted Apache
+author: Aleksey V Zapparov AKA ixti
+date: 06/09/2009
+category: administration/development/ideas
+tags: apache, chroot, php
+
+Not so far ago I was deploying <a href="http://www.asterisk.org/">Asterisk</a> for one of the projects for <a href="http://www.russianit.info/">"Russian Informational Technologies", Ltd</a>. Among other, main requirement was to allow users to send faxes using web based interface and receiving faxes for users based on their ID's. So, for example, on someone's call he enters user's ID (whom he wants to send a fax), if ID is valid, fax transmitting begins and fax is stored in sub-directory with specified ID.
+
+For fax sending/receiving I installed <a href="http://www.hylafax.org/">hylafax</a>. You can find great tutorial on installing and configuring <a href="http://www.the-asterisk-book.com/unstable/faxserver-mit-iaxmodem-und-hylafax.html">hylafax + iaxmodem + asterisk</a> in the Internet.  So I wrote a dummy PHP class for our web development department. But not so far ago (on Friday, 4th of September) they reported me that it's not working - faxes are not going anywhere. After I quick examining of problem I've found that <a href="">Apache</a> is <a href="http://en.wikipedia.org/wiki/chroot">chroot</a>'ed. So <code>sendfax</code> simply can't be found.
+
+~
+
+
+The easiest way to send faxes was to de-chroot apache and have fun :D but we don't looking for easy ways. So I decided to create some kind of "watchdir" solution. The idea is to check periodically some directory for files and if they are, do some job. Idea is very similar to how Asterisk handles it's <code>/var/spool/asterisk/outgoing</code> directory.
+
+First of all, let's define some example environment declarations:
+<ul>
+	<li><i>Apache</i> is running under <code>httpd</code> user</li>
+	<li><i>Apache</i> is chrooted into <code>/var/www</code> directory</li>
+	<li><i>Asterisk</i> is running under <code>asterisk</code> user</li>
+</ul>
+
+First I created <code>/var/www/spool/fax</code> directory which is readable and writable by both <code>httpd</code> and <code>asterisk</code> users. This directory will be used to send faxes. So if you don't know what is one of principle differences between copy and move operations, just like I did, before I read <a href="http://astbook.asteriskdocs.org/en/2nd_Edition/asterisk-book-html-chunk/index.html">Asterisk(tm): The Future of Telephony</a>, I'll cite a block <a href="http://astbook.asteriskdocs.org/en/2nd_Edition/asterisk-book-html-chunk/asterisk-CHP-14-SECT-5.html">from this book</a>:
+
+<blockquote>
+When you create a call file, do not do so from the spool directory. Asterisk monitors the spool aggressively and will try to grab your file before you’ve even finished writing it! Create call files in some other folder, make a copy in the same folder, and then mv the copy into the spool directory. Note that we said mv, not cp. This is important, because the way that Linux copies files means that the file appears in the destination folder before it is completely there. Contrast that with a mv operation, which will not allow the file to appear in the destination folder until the move operation is complete. If you copy, there is a very good chance that Asterisk will read the file before it is all there, which will cause unexpected results.
+</blockquote>
+
+So, now we can surely say, that Apache have to move files to be sent via fax to our <code>/var/www/spool/fax</code> directory. This part is not very interesting, as it is as simple in PHP as:
+
+<pre lang="php">
+< ?php
+exec(sprintf('mv "%s" "%s"', $src, $dst));
+</pre>
+
+Here I used <code>exec('mv')</code> instead of php's <a href="http://www.php.net/manual/en/function.rename.php">rename()</a> because of two things. I don't exactly know how rename() works :)) and I know that <code>mv</code> exactly what I supposed to do. :))
+
+So to send fax we need to know it's number. So let's agree that <code>$dst</code> will be in format
+<phone_number>_<unique_id>_<original_filename>, where <i>phone_number</i> is exactly what you have thought, <i>unique_id</i> is some unique identifier just to keep filenames differ, I propose md5sum of user's session ID + current timestamp, e.g. <code>md5(session_id() . time())</code>, and <i>original_filename</i> is self-describing.
+
+Now it's easy to get the phone number to send fax to :)) So let's create a simple monitor script, which I saved as <code>/home/asterisk/bin/fax-spool-mgr</code>:
+</pre><pre lang="bash">
+#!/bin/bash
+FAX_SPOOL=/var/www/spool/fax
+FAX_TMP=/home/asterisk/spool/fax
+
+for file in $FAX_SPOOL/*.pdf; do
+    filename=$(basename "$file")
+    phone_num=$(echo $filename | cut -f1 -d'_')
+    out_file="${file}.out"
+    mv $file $FAX_TMP
+    sendfax -n -d $phone_num $FAX_TMP/$filename &> $out_file
+done
+</pre>
+
+So finally I can add following line to <code>asterisk</code>'s crontab:
+<pre lang=crontab>
+*/5 * * * * /home/asterisk/bin/fax-spool-mgr
+</pre>
+
+Seems like that's all :)) As you mentioned above <code>fax-spool-mgr</code> redirects output into <code>/var/www/spool/fax/<original_filename>.out</code> which can then be used by PHP (under chroot'ed Apache) to get fax ID or error message there were any.
+
+PS Proposed script is very dummy. It need filename pattern tests and so on. This is just an idea. Not a ready solution. I'll publish production-ready solution as soon as I'll deploy it ;))

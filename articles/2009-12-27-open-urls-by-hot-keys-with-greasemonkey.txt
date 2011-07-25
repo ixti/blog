@@ -1,0 +1,19 @@
+---
+title: Open URLs by hot-keys with Greasemonkey
+author: Aleksey V Zapparov AKA ixti
+date: 27/12/2009
+category: firefox
+tags: javascript, plug-in
+
+There are some URLs that I use very often. E.g. <a href="http://www.google.com/search?q=google+mail">GMail(tm)</a>, <a href="http://www.google.com/search?q=google+reader">Google Reader(tm)</a>, JIRA etc. Using mouse to open a new tab with one of such URLs is useless waste of time. So I was using a <a href="https://addons.mozilla.org/firefox/addon/10127">SiteLauncher</a> extension for this purposes. But one day I realized: "Man, I'm using Greasemonkey so why I need an extra extension for such dummy purpose?". So I wrote a "<a href="http://userscripts.org/scripts/show/65059">HotKey URL</a>" script.
+
+~
+
+
+This script allows you to bind <i>Alt + HotKey</i> to open an URL in new tab. This version solves  all my needs, so it has no any kind of eye-candies. It simply do it's job. There is no easy-to use configuration manager, so you'll have to edit this script by yourself to add your hot key bindings. It's very easy. In the bottom of the script you'll see an object passed to the enclosure. Every property name of this object is a key code and it's value is an URL to open. By default I have defined two hot keys:
+<ul>
+	<li><i><b>Shift + m</b></i> -- to open Google Mail</li>
+	<li><i><b>Shift + r</b></i> -- to open Google Reader</li>
+</ul>
+
+To get the code of hot key, you can enable <code>DEBUG_MODE</code> by simply changing last passed argument to the enclosure to <code>true</code> (by default: <code>false</code>). Then refresh a tab (to apply changes in the script) and press a desired hot key. It's value will be shown in JavaScript Console (Hit <i>Ctrl + Shift + J</i> to open it).

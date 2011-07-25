@@ -1,0 +1,8 @@
+<h2>Articles tagged with <i>&laquo;<%= tag.title %>&raquo;</i></h2>
+<ul>
+  <% for entry in archives %>
+    <li>
+      <a href="<%= entry.path %>"><%= entry.title %></a>
+    </li>
+  <% end %>
+</ul>

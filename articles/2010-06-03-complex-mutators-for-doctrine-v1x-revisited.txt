@@ -1,0 +1,174 @@
+---
+title: Com­plex mutat­ors for Doc­trine v.1.x, REVISITED
+author: Aleksey V Zapparov AKA ixti
+date: 03/06/2010
+category: doctrine-orm
+tags: filter, mutator, orm, php, plug-in, zend_date
+
+After I have started to implement <a href="/?p=407">proposed in previous post</a> complex mutator I found that it's not really as good as I thought. Well for one model it probably is OK. And of course if it can be used with extended <code>Doctrine_Record</code> class version, but! Until you'll need more complex model (with relations etc.) which is mostly why you would like to use ORM at all. So after I've spent some more time I found the way to "update" protected data of the model.
+
+~
+
+
+If you read previous post, you probably remember that I told (when was discussing about <code>preSave()</code> hook) that there's now way to modify internal value of record. As I have found it today - it is. I forgot to look at the <code>Docrine_Record::call()</code> method which was exactly what I we need. So first of all let's create new record listener:
+
+~~~ php
+class App_Record_Listener_Date extends Doctrine_Record_Listener
+{
+    protected $format = null;
+    protected $fields = array();
+
+
+    public function __construct(array $fields = array(), $format = 'yyyy-MM-dd')
+    {
+        $this->format = $format;
+        $this->fields = $fields;
+    }
+
+
+    public function preSaveCallback($value)
+    {
+        return  ($value instanceof Zend_Date)
+                ? $value->toString($this->format) : $value;
+    }
+
+    public function preSave(Doctrine_Event $event)
+    {
+        $invoker = $event->getInvoker();
+        foreach ($this->fields as $fieldName) {
+            $invoker->call(array($this, 'preSaveCallback'), $fieldName);
+        }
+    }
+}
+```
+
+As you can see this listener receives a list of fields that it should affect on. Now let's extend our <code>App_Record_Filter_Date</code> class to assign this listener to the models with there are date fields:
+
+~~~ php
+<?php // file: library/App/Record/Filter/Date.php
+
+
+/** Doctrine_Record */
+require_once 'Doctrine/Record.php';
+
+
+/** Doctrine_Record_Filter */
+require_once 'Doctrine/Record/Filter.php';
+
+
+/** Doctrine_Record_UnknownPropertyException */
+require_once 'Doctrine/Record/UnknownPropertyException.php';
+
+
+/** App_Record_Listener_Date */
+require_once 'App/Record/Listener/Date.php';
+
+
+class App_Record_Filter_Date extends Doctrine_Record_Filter
+{
+    protected $fields, $format, $fieldsToSeek, $useAutoSeek;
+
+
+    public function __construct($format = 'yyyy-MM-dd', array $fieldsToSeek = array(), $useAutoSeek = true)
+    {
+        $this->fields       = array();
+        $this->format       = $format;
+        $this->fieldsToSeek = $fieldsToSeek;
+        $this->useAutoSeek  = (bool) $useAutoSeek;
+    }
+
+
+    public function init()
+    {
+        $table = $this->getTable();
+
+        foreach ($table->getColumns() as $name => $opts) {
+            if ('date' === $opts['type'] &amp;&amp; $this->useAutoSeek || in_array($name, $this->fieldsToSeek)) {
+                $field = $table->getFieldName($name);
+                $table->removeColumn($name);
+                $table->setColumn($name . ' as __' . $field, $opts['type'], $opts['length'], $opts);
+                $this->fields[$field] = '__' . $field;
+            }
+
+        }
+
+        if (0 < count($this->fields)) {
+            $table->addRecordListener(new App_Record_Listener_Date(array_values($this->fields), $this->format));
+        }
+    }
+
+
+    public function filterSet(Doctrine_Record $record, $name, $value)
+    {
+        if (isset($this->fields[$name])) {
+            if (is_string($value) &amp;&amp; Zend_Date::isDate($value, $this->format)) {
+                $value = new Zend_Date($value, $this->format);
+            }
+            $record[$this->fields[$name]] = $value;
+            return $record;
+        }
+        throw new Doctrine_Record_UnknownPropertyException(sprintf('Unknown record property / related component "%s" on "%s"', $name, get_class($record)));
+    }
+    
+
+    public function filterGet(Doctrine_Record $record, $name)
+    {
+        if (isset($this->fields[$name])) {
+            $value = $record[$this->fields[$name]];
+            if (is_string($value) &amp;&amp; Zend_Date::isDate($value, $this->format)) {
+                $value = new Zend_Date($value, $this->format);
+                $record[$this->fields[$name]] = $value;
+            } 
+            return $value;
+        }
+        throw new Doctrine_Record_UnknownPropertyException(sprintf('Unknown record property / related component "%s" on "%s"', $name, get_class($record)));
+    }
+}
+```
+
+And that's all! Now all we have to do is to append this filter to the model you want to be able to work with date fields as objects:
+
+~~~ php
+<?php // file: models/Person.php
+
+
+/** Doctrine_Record */
+require_once 'Doctrine/Record.php';
+
+
+/** App_Record_Filter_Date */
+require_once 'App/Record/Filter/Date.php';
+
+
+class Person extends Doctrine_Record
+{
+    public function setTableDefinition()
+    {
+        $this->hasColumn('birthday',   'date');
+        $this->hasColumn('married_at', 'date');
+        $this->hasColumn('created_at', 'integer');
+    }
+
+
+    public function setUp()
+    {
+        $this->unshiftFilter(new App_Record_Filter_Date);
+        $this->unshiftFilter(new App_Record_Filter_Date('U', array('created_at'), false));
+    }
+}
+```
+
+Notice! It's not using <code>App_Record</code> anymore! So now it's really looks much-much better!!! So you can:
+
+~~~ php
+$person = new Person;
+$person->birthday = new Zend_Date;
+$person->birthday->addMonth(1);
+$person->save();
+```
+
+Full sources are also available on the <a href="http://gist.github.com/423784">github</a> and as an attachment to this post.
+
+<ins datetime="2010-12-05T15:20:30+00:00">UPDATE</ins> Fixed according to Dave Small's <a href="http://blog.ixti.ru/?p=407#comment-1240">comment on previous post</a>.
+
+<ins datetime="2010-12-05T16:50:50+00:00">UPDATE</ins> Improved version of filter, which now allows to pass list of fields to be affected by filter as well as disable auto-binding for fields with <code>date</code>.

@@ -1,0 +1,52 @@
+---
+title: Adding thousands separators to a number
+author: Aleksey V Zapparov AKA ixti
+date: 10/07/2010
+category: howto
+tags: cli, perl, php, python, regexp, ruby
+
+Today Marco shared on his blog an idea how to <a href="http://mydebian.blogdns.org/?p=777">add thousands separators on CLI</a> with help of standard printf function, and Perl, and sed, and awk. So I want to extend his post with same thing but in PHP, Ruby and Python. Of course you can achieve same with <code>printf</code> functions of these langauages and setting correct locale, but it's not as interesting as one-line things. :)) So here we go...
+
+~
+
+
+<strong>PHP</strong>
+There are many ways to achieve this. But I'm going to show the most short and clean variants :)) Let's start with regular expressions usage. First way is to split string with regular expression into an array of chunks and then join them with comma clue, like this:
+```
+$ php -r 'echo implode(",", preg_split("/(?<=\d)(?=(\d{3})+$)/", $argv[1])) . "\n";' 1234
+```
+
+Also, you can use <code>preg_replace()</code> function:
+```
+$ php -r 'echo preg_replace("/(\d{1,3})(?=(\d{3})+$)/", "\\1,", $argv[1]) . "\n";' 1234
+```
+
+And finally you can simply use <code>number_format()</code> function:
+```
+$ php -r 'echo number_format($argv[1], 0, ".", ",") . "\n";' 1234
+```
+
+<strong>Ruby</strong>
+```
+$ ruby -e 'puts ARGV[0].gsub(/(\d{1,3})(?=(\d{3})+$)/, "\\1,")' 1234
+```
+
+<strong>Python</strong>
+In fact I don't have lot's of practice in Python every-day usage, so if you know better variant, feel free to share it and point me that I'm shit ;))
+```
+$ python -c 'import sys,re; print re.sub(r"(\d{1,3})(?=(\d{3})+$)", "\\1,", sys.argv[1])' 1234
+```
+
+<ins datetime="2010-07-10T12:22:55+00:00">Update</ins>
+
+<strong>Perl</strong>
+Basically this is alternative version of Marco's variant, that I've just posted as a comment to his post :)) So I'm placing it here jsut to keep it for myself :)) In Perl you can achieve this with only assertions (like with <code>preg_split()</code> of PHP):
+```
+$ perl -pe 's/(?<=\d)(?=(\d{3})+$)/,/g' <<< 1234
+```
+
+Or with only one asserion:
+```
+$ perl -pe 's/(\d{1,3})(?=(\d{3})+$)/\1,/g' <<< 1234
+
+~~~ 

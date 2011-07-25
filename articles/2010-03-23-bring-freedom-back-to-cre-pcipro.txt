@@ -1,0 +1,15 @@
+---
+title: Bring free­dom back to CRE PCI PRO
+author: Aleksey V Zapparov AKA ixti
+date: 23/03/2010
+category: oscommerce
+tags: cre-loaded, freedom, gpl, php
+
+After I found that <a href="http://www.creloaded.com/">CRE PCI PRO</a> is based on free (as in freedom) software as well as CE version, and that "CRE Inc." violates your freedom to run (unless you'll pay for per domain serial number), I decided to make it free again. So here's patch to make CRE PCI PRO more or less free again...
+
+~
+
+
+In <a href="/?p=320">previous post</a> I told that I know nothing about PRO version. It was truth, until today. I was very interested does it at least differs from CE version or PRO features are limited like in <a href="http://www.technipages.com/hack-to-change-windows-xp-home-to-windows-xp-professional.html">microshit windows XP</a> (a simple trigger which enables or disables PRO features). I was right in my guess - more than 75% of code is left as is. But they force you to buy and enter a serial number for each domain you have.
+
+So I prepared a <a href="http://gist.github.com/397634">dirty fix</a> for wiping out this limitations. Now it's little bit more free again :)) Also I have prepared an original distributive with this patch applied, so you can use it for new installations or upgrades.

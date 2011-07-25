@@ -1,0 +1,120 @@
+---
+title: Ready! Steady! Go!
+author: Aleksey V Zapparov AKA ixti
+date: 11/11/2009
+category: development
+tags: go, google
+
+Today I found a new programming <a href="http://golang.org/">language Go</a> <a href="http://google-opensource.blogspot.com/2009/11/hey-ho-lets-go.html">from Google</a>. In closest future I'll try to do some thing using it, but today I just want to install it. Of course language's homepage has instructions of installation process, but by some reason it was not suited on my Debian GNU/Linux "squeeze". So here we go...
+
+~
+
+
+First of all, you'll need to add environment variables. You can learn about these variables from original <a href="http://golang.org/doc/install.html#tmp_17">installation manual</a>:
+<blockquote>
+ $GOROOT
+    The root of the Go tree. Typically this is $HOME/go but it can be any directory. 
+$GOOS and $GOARCH
+    The name of the target operating system and compilation architecture. Choices for $GOOS are linux, darwin (Mac OS X 10.5 or 10.6), and nacl (Native Client, an incomplete port). Choices for $GOARCH are amd64 (64-bit x86, the most mature port), 386 (32-bit x86), and arm (32-bit ARM, an incomplete port). The valid combinations are linux/amd64, linux/arm, linux/386, darwin/amd64, darwin/386, and nacl/386. 
+</blockquote>
+
+Here are variables that I declared on my laptop. I store sources of <i>Go</i> under my <code>$HOME/wc/go</code> directory. So here's my variables (as they defined in my <code>$HOME/.profile</code> file):
+<pre lang="bash">
+export GOROOT="$HOME/wc/go"
+export GOOS="linux"
+export GOARCH="386"
+</pre>
+
+Also I have <code>$HOME/bin</code> directory, which is in my <code>$PATH</code> variable:
+<pre lang="none">
+$ ls -l $HOME | grep bin
+drwxr-xr-x  2 ixti ixti    4096 Nov  1 13:01 bin
+$ echo $PATH
+/home/ixti/bin:/usr/local/bin:/usr/bin:/bin:/usr/games
+</pre>
+
+To download sources of <i>Go</i> you'll need <a href="http://mercurial.selenic.com">Mercurial</a> client. So if you don't have it installed yet, install it:
+<pre lang="none">
+$ sudo apt-get install mercurial
+</pre>
+
+To compile it's sources we'll need some packages (as described on original instructions page), so let's install them too:
+<pre lang="none">
+$ sudo apt-get install bison gcc libc6-dev ed
+</pre>
+
+OK. Now we need to download sources:
+<pre lang="none">
+$ mkdir $GOROOT
+$ hg clone -r release https://go.googlecode.com/hg/ $GOROOT
+</pre>
+
+Now we have sources of <i>Go</i>. Let's compile them:
+<pre lang="none">
+$ cd $GOROOT/src
+$ ./all.bash
+</pre>
+
+While compiling you'll need an Internet connection. My ISP is not the best so sometimes new connections are simply dropped. So I've met this error:
+<pre lang="none">
+...
+gopack grc _test/net.a _gotest_.8 
+make[2]: Leaving directory `/home/ixti/wc/go/src/pkg/net'
+--- FAIL: net.TestDialGoogle
+	-- 74.125.19.99:80 --
+	-- www.google.com:80 --
+	-- 74.125.19.99:http --
+	-- www.google.com:http --
+	-- 074.125.019.099:0080 --
+	-- [::ffff:74.125.19.99]:80 --
+	Dial("tcp", "", "[::ffff:74.125.19.99]:80") = _, dial tcp 74.125.19.99:80: connection timed out
+	-- [::ffff:4a7d:1363]:80 --
+	Dial("tcp6", "", "[::ffff:4a7d:1363]:80") = _, dial tcp6 74.125.19.99:80: connection timed out
+	-- [0:0:0:0:0000:ffff:74.125.19.99]:80 --
+	-- [0:0:0:0:000000:ffff:74.125.19.99]:80 --
+	-- [0:0:0:0:0:ffff::74.125.19.99]:80 --
+FAIL
+make[1]: *** [test] Error 1
+make[1]: Leaving directory `/home/ixti/wc/go/src/pkg/net'
+make: *** [net.test] Error 2
+</pre>
+
+If your Internet connection was down, or you have same ISP as I do, don't scare, simply connect (reconnect) to the Internet and <code>all.bash</code> again:
+<pre lang="none">
+$ ./all.bash
+</pre>
+
+When compilation will finish (it took about 15 minutes on my laptop), you'll see something like this in the end:
+<pre lang="none">
+--- cd ../test
+0 known bugs; 0 unexpected bugs
+</pre>
+
+According to original manual numbers can differ from version to version.
+
+Now let's see what we've just got. First of all, it created its binaries under my <code>$HOME/bin</code>. So let's test it with trivial "Hello World"-like example. I've created <code>lets.go</code> with following lines:
+<pre lang="go">
+// lets.go
+package main
+import "fmt"
+func main()
+{
+    fmt.Printf("Let's Go!\n");
+}
+</pre>
+
+This tutorial is not about how to program in <i>Go</i>, so you can refer to official site for details on <a href="http://golang.org/doc/go_tutorial.html#tmp_17">similar example</a> but with line by line description of code.
+
+So program above should output "Let's Go!". Let's compile it:
+<pre lang="go">
+$ 8g lets.go 
+$ 8l lets.8
+</pre>
+
+First command <code>8g lets.go</code> produced compiled <code>lets.8</code>. Then we linked it with <code>8l lets.8</code> which produced <code>8.out</code>. Let's run it:
+<pre lang="none">
+$ ./8.out 
+Let's Go!
+</pre>
+
+Viola!

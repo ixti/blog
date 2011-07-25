@@ -1,0 +1,19 @@
+---
+title: WeeChat and jabber.py
+author: Aleksey V Zapparov AKA ixti
+date: 01/08/2010
+category: weechat
+tags: irc, jabber, patch, plug-in, python, xmpp
+
+There's awesome IRC client - <a href="http://www.weechat.org/">WeeChat</a>. It's very powerfull and extensible. And the only thing I miss in it is full XMPP suport, so I still using <a href="http://tkabber.jabber.ru/">tkabber</a> for XMPP. Thankfully WeeChat has a <a href="http://www.weechat.org/files/scripts/unofficial/jabber.py">plugin</a>, that gives you at least XMPP private messaging support. But as some of my buddies are using non-ascii it was not working properly, throwing <code>UnicodeEncodeError</code> exception...
+
+~
+
+
+After I have asked FlashCode about this bug, he told me that I'm free to make a patch. So after this, even the fact that I'm not very familiar with Python could not stop me to produce such. So I will appreciate any critics and comments on my patch :)) I have sent my patch to FlashCode, so probably he will include it into his repo.
+
+For those who want it right now, you can grab either a patch to original plug-in or already patched version right here.
+
+<ins datetime="2010-08-01T18:43:33+00:00">UPDATE</ins> Sebastien (AKA FlashCode) merged this patch into repo, so it's now publically available at unofficial WeeChat scripts repo :))
+
+<ins datetime="2010-08-02T16:36:21+00:00">UPDATE</ins> Woo-hoo! jabber.py is in official WeeChat repo! ;))

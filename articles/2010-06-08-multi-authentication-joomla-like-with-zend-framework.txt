@@ -1,0 +1,172 @@
+---
+title: Multi-authentication (Joomla! like) with Zend Framework
+author: Aleksey V Zapparov AKA ixti
+date: 08/06/2010
+category: zend-framework
+tags: authentication, php, zend_auth
+
+Some of CMS' provides you with not only separate authentication for standard user and administrators. And they work simultaneously - you can log-in into both sections (<a href="http://help.joomla.org/content/view/1607/214/#Frontend">font-end</a> and <a href="http://help.joomla.org/content/view/1607/214/#back-end">back-end</a> administration in terms of <a href="http://www.joomla.org/">Joomla!</a>). After some of <a href="http://zend-framework-community.634137.n4.nabble.com/using-of-two-auth-in-zend-td2244059.html">my naive suggestions</a> on Zend framework mailing list I decided to create a sample application with such "multi-authentication" feature.
+
+~
+
+
+My first proposal was to extend <code>Zend_Auth</code> class to use different instances in different parts. So you need to define a base class and it's descendants. For example something like this:
+
+~~~ php
+/**
+ * Abstract implementation of authentication class
+ */
+abstract class Application_Auth extends Zend_Auth
+{
+    protected function getStorage()
+    {
+        if (null === $this->_storage) {
+            require_once 'Zend/Auth/Storage/Session.php';
+            $namespace = Zend_Auth_Storage_Session::NAMESPACE_DEFAULT;
+            $member    = get_class($this);
+            $this->setStorage(new Zend_Auth_Storage_Session($namespace, $member));
+        }
+        
+        return $this->_storage;
+    }
+}
+
+
+/**
+ * Authentication class for admin sections
+ */
+class Application_Auth_Admin extends Application_Auth
+{}
+
+
+/**
+ * Authentication class for user sections
+ */
+class Application_Auth_User extends Application_Auth
+{}
+```
+
+This will work. But it looks no good. And of course it becomes look awful once you'll find out that you have to use different classes in different places - it's not flexible at all. But this example was good to show one little thing about <code>Zend_Auth_Storage_Session</code> class. It's constructor has two arguments: <code>$namespace</code> which is <code>Zend_Auth</code> by default, and <code>$member</code> which is <code>storage</code> by default. So we'll use <code>$member</code> to store several credentials.
+
+One of my first ideas were to mangle <code>Zend_Auth</code> storage object inside bootstrap. First idea was to mangle storage object. Second was to mangle <code>session.name</code> PHP settings variable. All these attempts failed. As choosing appropriate member or namespace needs to be route based (in most cases it will be module-based) we need to know something about current request. But you can't get something about request upon bootstrap process as request is populated during dispatching.
+
+So after small investigation about when and how request is created and populated (I'll describe every single step of request life on my next post) I found that to achieve our goal we need to use <code>Zend_Controller_Action</code> plug-in. As I told earlier mostly you would like this feature to be module-dependent. So basic version of such plug-in will look like:
+
+~~~ php
+class Application_Controller_Plugin_ModularAuth
+extends Zend_Controller_Plugin_Abstract
+{
+    public function preDispatch(Zend_Controller_Request_Abstract $request)
+    {
+        $namespace = Zend_Auth_Storage_Session::NAMESPACE_DEFAULT;
+        $member    = Zend_Auth_Storage_Session::MEMBER_DEFAULT
+                   . '-' . $request->getModuleName();
+        $storage   = new Zend_Auth_Storage_Session($namespace, $member);
+        Zend_Auth::getInstance()->setStorage($storage); 
+    }
+}
+```
+
+To use it all you need is to register it. You can do it via application configuration by adding following line to your <code>application.ini</code>:
+```
+; ...
+resources.frontController.plugins[] = 'Application_Controller_Plugin_ModularAuth'
+; ...
+```
+
+Works well, and as long as you have only two modules it's more than enough. But let's say that you have more than two modules, e.g.: <em>default</em>, <em>manager</em>, <em>administrator</em>. Of course as long as you need separate authentication object per each module - it's OK. But mostly you need only two - one for ordinary users (so-called front-end administration in Joomla! terms) and one for administrators (so called back-end administration in terms of Joomla!). For such purposes we'll need more <a href="http://gist.github.com/430204">complex plug-in</a>. Something like this:
+
+~~~ php
+<?php
+
+
+class Application_Controller_Plugin_ModularAuth extends Zend_Controller_Plugin_Abstract
+{
+    protected $groups;
+
+
+    public function __construct($groups = array())
+    {
+        $this->groups = array();
+
+        // make sure $this->groups will be in format array of arrays
+        // see self::getModuleMemberName()
+        foreach ((array) $groups as $id => $modules) {
+            $this->groups[$id] = (array) $modules;
+        }
+    }
+
+
+    public function getModuleMemberName($moduleName)
+    {
+        $member = Zend_Auth_Storage_Session::MEMBER_DEFAULT;
+
+        // try to find group of module
+        foreach ($this->groups as $id => $modules) {
+            if (in_array($moduleName, $modules)) {
+                // return group's member name
+                return $member . $id;
+            }
+        }
+
+        // return fallback member name
+        return $member;
+    }
+
+
+    public function preDispatch(Zend_Controller_Request_Abstract $request)
+    {
+        $namespace = Zend_Auth_Storage_Session::NAMESPACE_DEFAULT;
+        $member    = $this->getModuleMemberName($request->getModuleName());
+        $storage   = new Zend_Auth_Storage_Session($namespace, $member);
+        Zend_Auth::getInstance()->setStorage($storage); 
+    }
+}
+```
+
+So, now <em>ModularAuth</em> plug-in receives a list of "scopes" (module names). Which for convenience can be passed as a string if you need only two scopes of authentication. Or array of strings with module names to define a scope per each described module. Or an array of arrays to describe different scopes that are suitable for more than one module. If current module does not present in scopes array (<code>$groups</code>) than default <code>$member</code> name is returned. Examples:
+
+~~~ php
+// Two scopes of authentication - for admin module and for anything else
+$plugin = new Application_Controller_Plugin_ModularAuth('admin');
+
+// Same as above
+$plugin = new Application_Controller_Plugin_ModularAuth(array('admin'));
+
+// Same as above
+$scopes = array(array('admin'));
+$plugin = new Application_Controller_Plugin_ModularAuth($copes);
+
+// Three scopes of authentication. For modules: admin, manager and all others
+$scopes = array('admin', 'manager');
+$plugin = new Application_Controller_Plugin_ModularAuth($scopes);
+
+// Most complex variant. defines three scopes. First serves admin module,
+// second will handle manager and topmanager modules. And default member
+// for everything else...
+$scopes = array(array('admin'), array('manger', 'topmanager'));
+$plugin = new Application_Controller_Plugin_ModularAuth($scopes);
+```
+
+As plug-in now needs an argument to be passed to constructor you need to create a <code>Bootstrap</code>'s resource. Something like this:
+
+~~~ php
+class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
+{
+    // ...
+
+    protected function _initFrontController()
+    {
+        $front  = $this->hasPluginResource('FrontController')
+                ? $this->getPluginResource('FrontController')->init()
+                : Zend_Controller_Front::getInstance();
+        $plugin = new Application_Controller_Plugin_ModularAuth('admin');
+        $front  ->registerPlugin($plugin);
+        return $front;
+    }
+
+    // ...
+}
+```
+
+Basically that's it. In the attachment to this post you'll find an example application showing this plug-in in-action.

@@ -1,0 +1,157 @@
+---
+title: Test if request is really dis­patch­able in Zend Framework
+author: Aleksey V Zapparov AKA ixti
+date: 02/02/2010
+category: zend-framework
+tags: acl, php, plug-in, zend_controller
+
+Sometimes you need to check if request is dispatchable. The most common place where you can meet this need is in controller plug-in. I have met that I need to test if request is dispatchable when I have implemented my App_Controller_Plugin_Acl for ACL checking based on <a href="http://framework.zend.com/wiki/pages/viewpage.action?pageId=39025">ZF proposal</a>. So ACL test is run before request will be dispatched. Of course I don't want to run ACL checks for requests that are not dispatchable. I relay on standard dispatcher's <code>Zend_Controller_Disptcher_Interface::isDispatchable()</code> and that was my mistake - as I spent hours trying to understand what I'm doing wrong. Yes! The problem was that <code>isDispatchable()</code> doesn't care about actions - it tests controller existence only. But fortunately it still can be easily tested...
+
+~
+
+
+As I said before, I was trying to use the same way I saw in proposal:
+<pre lang="php">
+    $dispatcher = Zend_Controller_Front::getInstance()->getDispatcher();
+    if (!$dispatcher->isDispatchable($request)) {
+        return;
+    }
+</pre>
+
+But this code will cause an unpredictable result. As it checks only a controller existence and don't care about action. You'll figure it out if you'll look at this method in the sources:
+<pre lang="php">
+// Zend/Controller/Dispatcher/Standard.php
+// ...
+    public function isDispatchable(Zend_Controller_Request_Abstract $request)
+    {
+        $className = $this->getControllerClass($request);
+        if (!$className) {
+            return false;
+        }
+
+        if (class_exists($className, false)) {
+            return true;
+        }
+
+        $fileSpec    = $this->classToFilename($className);
+        $dispatchDir = $this->getDispatchDirectory();
+        $test        = $dispatchDir . DIRECTORY_SEPARATOR . $fileSpec;
+        return Zend_Loader::isReadable($test);
+    }
+// ...
+</pre>
+
+After quick-time googling and annoying my colleague Kirill AKA dhampik, who showed me <a href="http://n4.nabble.com/should-isDispatchable-check-if-the-action-exists-td669352.html">a post with the same problem</a>, I have rewritten method found in that solution, so it's now clean and simple. For this purpose I have defined my abstract class <code>App_Controller_Plugin_Abstract</code>:
+<pre lang="php">
+< ?php
+
+
+/**
+ * Zend_Controller_Plugin_Abstract
+ */
+require_once 'Zend/Controller/Plugin/Abstract.php';
+
+
+class App_Controller_Plugin_Abstract extends Zend_Controller_Plugin_Abstract
+{
+    /**
+     * Return whether a given request (module-controller-action) exists
+     *
+     * @param Zend_Controller_Request_Abstract $request Request to check
+     * @return boolean Whether the action exists
+     */
+    protected function _actionExists(Zend_Controller_Request_Abstract $request)
+    {
+        $dispatcher = Zend_Controller_Front::getInstance()->getDispatcher();
+       
+        // Check controller
+        if (!$dispatcher->isDispatchable($request)) {
+            return false;
+        }
+
+        $class  = $dispatcher->loadClass($dispatcher->getControllerClass($request));
+        $method = $dispatcher->formatActionName($request->getActionName());
+
+        return is_callable(array($class, $method));
+    } 
+}
+</pre>
+
+Usage of this class and method is very easy. Let's say you are making your plug-in for dealing with ACL on pre-dispatch event:
+<pre lang="php">
+< ?php
+
+
+/**
+ * App_Controller_Plugin_Abstract
+ */
+require_once 'App/Controller/Plugin/Abstract.php';
+
+
+class App_Controller_Plugin_Acl extends App_Controller_Plugin_Abstract
+{
+    // ...
+
+    public function preDispatch(Zend_Controller_Request_Abstract $request)
+    {
+        if ( ! $this->_actionExists($request)) {
+            return;
+        }
+
+        // ...
+    }
+
+    // ...
+}
+</pre>
+
+<b>Changelog:</b>
+<ins datetime="2010-02-24T18:39:18+00:00">UPD[2010/02/24]:</ins>
+Changed <code>in_array($method, get_class_methods($class))</code> to <code>is_callable(array($class, $method))</code> as it works little bit faster. So dummy test:
+
+<pre lang="php">
+class Foo
+{
+    public function foo()
+    {}
+}
+
+$class    = 'Foo';
+$method_a = 'foo';
+$method_b = 'moo';
+
+$time_a = microtime(true);
+for ($i = 0; $i < 1000000; $i++) {
+    is_callable(array($class, $method_a));
+    is_callable(array($class, $method_b));
+}
+$time_b = microtime(true);
+echo 'is_callable()' . PHP_EOL;
+echo 'Start: ' . $time_a . PHP_EOL;
+echo 'Stop: ' . $time_b . PHP_EOL;
+echo 'Diff: ' . ($time_b-$time_a) . PHP_EOL;
+
+$time_a = microtime(true);
+for ($i = 0; $i < 1000000; $i++) {
+    in_array($method_a, get_class_methods($class));
+    in_array($method_b, get_class_methods($class));
+}
+$time_b = microtime(true);
+echo 'in_array()' . PHP_EOL;
+echo 'Start: ' . $time_a . PHP_EOL;
+echo 'Stop: ' . $time_b . PHP_EOL;
+echo 'Diff: ' . ($time_b-$time_a) . PHP_EOL;
+</pre>
+
+Will show results as follows:
+
+</pre><pre>
+is_callable()
+Start: 1267036706.61
+Stop: 1267036716.43
+Diff: 9.82274079323
+in_array()
+Start: 1267036716.43
+Stop: 1267036729.76
+Diff: 13.3308188915
+</pre>

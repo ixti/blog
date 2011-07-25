@@ -1,0 +1,59 @@
+---
+title: Remov­ing adobe-flashplugin
+author: Aleksey V Zapparov AKA ixti
+date: 14/08/2009
+category: debian
+tags: adobe, cli, flash
+
+Today I've made one mistake. I've installed on my Debian squeeze/sid a package install_flash_player_10_linux.deb from <a href="http://www.google.com/search?q=adobe">Adobe(tm)</a> and now I can't neither remove it nor use it.  So, when I try to `<code>apt-get remove flashplayer-mozilla</code>` I receive an error:
+
+<pre>
+ixti@msi-s300:~$ sudo apt-get remove flashplayer-mozilla
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+E: The package adobe-flashplugin needs to be reinstalled, but I can't find an archive for it.
+</pre>
+
+~
+
+
+Even trying to remove it with `<code>dpkg --force-all --remove adobe-flashplugin</code>` throws an error:
+
+<pre>
+ixti@msi-s300:~$ sudo dpkg --force-all --remove adobe-flashplugin
+dpkg: warning: overriding problem because --force enabled:
+Package is in a very bad inconsistent state - you should
+reinstall it before attempting a removal.
+(Reading database ... 363405 files and directories currently installed.)
+Removing adobe-flashplugin ...
+update-alternatives: error: no alternatives for iceape-flashplugin.
+update-alternatives: error: no alternatives for iceape-flashplugin.
+dpkg: error processing adobe-flashplugin (--remove):
+subprocess installed pre-removal script returned error exit status 2
+postinst called with argument `abort-remove'
+dpkg: error while cleaning up:
+subprocess installed post-installation script returned error exit status 1
+Errors were encountered while processing:
+adobe-flashplugin
+</pre>
+
+After 15 minutes of googling I found a solution on russian forums: <a href="http://forum.lafox.net/index.php?showtopic=21011">Lafox.NET</a> and <a href="http://linuxforum.ru/index.php?showtopic=93269">LinuxForum.RU</a>. So for those of you who are not familiar with russian language I'm proud to explain the solution.
+
+The problem is that this package was built ONLY for Ubuntu. And before removing itself it tries to execute pre-remove action on every package listed in VARIANTS variable of <code>/var/lib/dpkg/info/adobe-flashplugin.prerm</code>. So all we need to do is to comment out that variable. So after you will comment out it you'll be able to remove it, e.g. with `<code>dpkg --force-all --remove adobe-flashplugin</code>`:
+
+<pre>
+ixti@msi-s300:~$ sudo dpkg --force-all --remove adobe-flashplugin
+dpkg: warning: overriding problem because --force enabled:
+ Package is in a very bad inconsistent state - you should
+ reinstall it before attempting a removal.
+(Reading database ... 363405 files and directories currently installed.)
+Removing adobe-flashplugin ...
+dpkg: warning: while removing adobe-flashplugin, directory '/usr/lib/adobe-flashplugin' not empty so not removed.
+</pre>
+
+UPD [28 Nov 2009]: As <a href="http://velotronheavyindustries.com/">Joseph</a> mentioned in comments, sometimes this solution does not help. So in fact the easiest way to "force" removal of plugin is to "disable" APT's pre-rm requisitions by simple renaming it:
+<pre>
+# mv /var/lib/dpkg/info/adobe-flashplugin.prerm /var/lib/dpkg/info/adobe-flashplugin.prerm-DISABLED
+</pre>
+But don't forget to remove <code>adobe-flashplugin.prerm-DISABLED</code> manually once package was removed.
