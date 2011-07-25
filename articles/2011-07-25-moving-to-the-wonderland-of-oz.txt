@@ -4,19 +4,19 @@ tags: toto, wordpress, migration, ruby, life
 date: 25/07/2011
 
 Long time I was using WordPress as my blog engine. But most of the time when I
-wanted to write something I was to lazy to open up browser, go to admin panel,
+wanted to write something I was too lazy to open up browser, go to admin panel,
 click, clack, use ugly semi-HTML, check if everything is OK. Enough! Finally I
-have found blog platform ideal for me, and which 100% fulfills my requirements.
-Ladies and gentlemen, please welcome, [Toto], from the wonderland of Oz!
+have found blog platform ideal for me. The one that fulfills my requirements by
+100%. Ladies and gentlemen, please welcome, [Toto], from the wonderland of Oz!
 
 [Toto]: http://cloudhead.io/toto/
 
 ~
 
-So what is so cool about Toto? First of all, it's not a blogging "platform" with
-bloated CMS. It's just a small application built right on top of [Rack] with
-similar idea to [Scanty]. I guess the best description of this kind of software
-was given by author of Scanty, Adam Wiggins:
+So, what is so cool about Toto? First of all, it's not a blogging "platform"
+with bloated CMS. It's just a small application built right on top of [Rack]
+with similar ideas to [Scanty]. I guess the best description of this kind of
+software was given by author of Scanty, Adam Wiggins:
 
 > This isn’t a blogging engine, just a blog.
 > ...
@@ -26,22 +26,17 @@ was given by author of Scanty, Adam Wiggins:
 > 
 > _[Scanty, the Blog That's Almost Nothing][Scanty Introduction]_
 
-So what we have under the hood? Well, almost nothing :)) We have clean files and
-directories structure, we have easy to extend templates, we have [git] for
-keeping revisions history and [markdown] for articles.
-
 Why I'm so impressed? First of all, now I can have local copy of my blog on my
 laptop, so I can really start using it as my scratchpad (the main reason I have
 started my blog). Second awesome thing, I can do it the way I like, right from
-TTY with my lovely [VIM]. Third really important thing is that I can now easily
+TTY with my lovely [Vim]. Third really important thing is that I can now easily
 search through my posts with `grep`. And I can easily see which changes I have
 made and when. And I can easily share my blog with anybody, you can clone it on
 [github](https://github.com/ixti/blog/) to be able to read my idiocies offline
 or use this dummy template :))
 
-There are lots of alternatives with similar ideas, but I love Toto. It's files
-hierarchy structure seems more clean to me, and I've just finished almost all
-migrations ;))
+There are lots of alternatives with more or less similar ideas,
+but why I choose Toto? I just like it. That's all.
 
 ### What's next?
 
@@ -49,10 +44,10 @@ This is my first post with Toto. There are still lots of things I need to
 finish. So next month I will:
 
 * Polish links styles - right now it's pretty hard to distinguish grey links
-  from text which is dark-grey
-* Migrate all files from old blog into `/public/downloads/`
-* Recheck migrated old posts to be valid and readable
-* Add categories support
+  from text which is dark-grey. And shadow on heading links looks awfull.
+* Migrate all files from old blog into `/public/downloads/`.
+* Recheck migrated old posts to be valid and readable.
+* Add categories support.
 * ~~Add tagging support~~ [https://github.com/ixti/toto/tree/tags]()
 
 ### Thanks, my friends
@@ -61,11 +56,11 @@ I would like to thank my wife Natalia Zapparova for making my life as it is,
 for three wonderful kids, giving me reason to live, not buzzing me while I was
 so excited about making my Toto template, and for taking care of me by keeping
 my cup full of coffee. Would like to thank [Alexis Sellier][cloudhead] for
-making my life much more easier with Toto. Would like to thank [Scott
-Stout][skout23] for the migration script (which helped me to make final decision
-about moving forward). Would like to thank [Paul Irish], [Divya Manian],
-[Shichuan] and all the contributors of [HTML5 Boilerplate]. And all open-source
-developers, for making our life better! :))
+wonderfull Toto. Would like to thank [Scott Stout][skout23] for the migration
+script (which helped me to make final decision about moving forward). Would
+like to thank [Paul Irish], [Divya Manian], [Shichuan] and all the contributors
+of [HTML5 Boilerplate]. And all open-source developers, for making our world
+better! :))
 
 
 [Rack]: http://rack.rubyforge.org/
@@ -73,7 +68,7 @@ developers, for making our life better! :))
 [Scanty Introduction]: http://adam.heroku.com/past/2008/11/4/scanty_the_blog_thats_almost_nothing/
 [git]: http://git-scm.com/
 [markdown]: http://daringfireball.net/projects/markdown/
-[VIM]: http://www.vim.org/
+[Vim]: http://www.vim.org/
 [cloudhead]: http://cloudhead.io/
 [skout23]: https://github.com/skout23/
 [Paul Irish]: http://paulirish.com/
