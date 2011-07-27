@@ -21,7 +21,7 @@ task :new do
     end
 
     editor = ENV['EDITOR'] || ""
-    if !editor.empty? && ask('Edit? ').upcase == 'Y'
+    if !editor.empty? && ask('Edit? ').upcase[0] == 'Y'
       system "#{editor} #{path}"
     end
 
