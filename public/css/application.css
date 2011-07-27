@@ -58,7 +58,7 @@ a:visited { color: #777; }
 a:focus { outline: thin dotted; }
 
 /* Improve readability when focused and hovered in all browsers: people.opera.com/patrickl/experiments/keyboard/test */
-a:hover, a:active { outline: 0; color: #000; text-shadow: 0px 0px 2px #333; }
+a:hover, a:active { outline: 0; color: #000; text-shadow: 0px 0px 2px #777; }
 
 
 /* =============================================================================
