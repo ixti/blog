@@ -36,8 +36,8 @@ Math.multiply(2, 2, function (err, result) { /* ... */ });
 
 ### Checking file existence synchronously
 
-Now let's write a dummy test script that will run `path.existsSync` multiple
-times and monitor how much time will it take to run it:
+Let's write a dummy test script that will run `path.existsSync` multiple times
+and monitor how much time will it take to run it:
 
 ``` javascript
 // file: exists-test-1.js
@@ -92,7 +92,7 @@ while (count--) {
 console.timeEnd(title);
 ```
 
-If you was out for a cup of coffee while running test, then if you are one of
+If you was out for a cup of coffee while running test, and if you are one of
 those blind async fanboys you would probably scream _"I told you!"_
 
 ``` bash
@@ -103,10 +103,10 @@ Iterating 100000 times: 536ms
 ```
 
 But if you was here while running test, you would mention that there were about
-3-6 seconds of delay between test runs. And of course, if you understand nature
-at least as not deep as I do, then you'll understand why, that's because, all
-calls were delayed and `console.timeEnd` was called before all `exists` were
-fired and handled.
+3-6 seconds of delay between test runs. And of course, if you understand it's
+nature at least same primitive level as I do, you'll understand the cause.
+The reasone is because, all `path.exists` were delayed and so `console.timeEnd`
+was called before all `exists` were fired and handled.
 
 
 ### Checking file existence asynchronously (how much time will it take in fact?)
