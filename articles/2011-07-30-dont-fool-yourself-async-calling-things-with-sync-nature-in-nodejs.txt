@@ -6,7 +6,7 @@ date: 30/07/2011
 
 I bet almost everybody knows about [Node.JS] these days. By today it's the most
 popular implementation of [CommonJS]. Because of "asynchronous event-driven
-model" some developers force callback based usage even with absoltely
+model" some developers force callback based usage even with absolutely
 synchronous things. So basically this post is just to prove some obvious points
 for myself.
 
@@ -34,7 +34,7 @@ Math.multiply(2, 2, function (err, result) { /* ... */ });
 ```
 
 
-### Checking file existance synchronously
+### Checking file existence synchronously
 
 Now let's write a dummy test script that will run `path.existsSync` multiple
 times and monitor how much time will it take to run it:
@@ -67,7 +67,7 @@ Iterating 100000 times: 3590ms
 ```
 
 
-### Checking file existance asynchronously
+### Checking file existence asynchronously
 
 Now, let's replace `path.existsSync` with asynchronous `path.exists` and see
 what will change:
@@ -109,10 +109,10 @@ calls were delayed and `console.timeEnd` was called before all `exists` were
 fired and handled.
 
 
-### Checking file existance asynchronously (how much time will it take in fact?)
+### Checking file existence asynchronously (how much time will it take in fact?)
 
 Let's modify our last test in order to show us the same time as in synchronous
-verion test (from entry until every single call finished):
+version test (from entry until every single call finished):
 
 ``` javascript
 // file: exists-test-3.js
@@ -158,7 +158,7 @@ get anyway, they will still be waiting.
 Of course, clerk will be able to preprocess some of the papers and those who are
 easier, process the same time it accepts papers, but this will delay queue
 execution for more time, as first person will be forced to wait until his papers
-will be processed while clekr will be serving one came after.
+will be processed while clerk will be serving one came after.
 
 Yes, sometimes, probably, this behavior is what you really want. For example,
 it's OK to asynchronously read/write some big amount of data, so you'll be able
@@ -166,5 +166,5 @@ to serve other clients with "smaller" needs, because in this case the one
 requested "long taking" operation will not see big difference (you won't mention
 10 cents when you are talking about prices >100 Euros. In opposite side you will
 mention extra 10 cents if the cost was 15 cents only. So pay attention on what
-are you doing, don't act as a monkey, repeating someone's mantras, especially
+are you doing, don't act as a monkey, repeating someones mantras, especially
 when that person see nothing further than his nose.
