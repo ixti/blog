@@ -6,9 +6,9 @@ date: 30/07/2011
 
 I bet almost everybody knows about [Node.JS] these days. By today it's the most
 popular implementation of [CommonJS]. Because of "asynchronous event-driven
-model" some developers force callback based usage even with absolutely
-synchronous things. So basically this post is just to prove some obvious points
-for myself.
+model" some developers force callback based usage even with absolutely trivial
+and/or synchronous things. So basically this post is just to prove some obvious
+points for myself.
 
 [Node.JS]: http://nodejs.org/
 [CommonJS]: http://www.commonjs.org/
@@ -16,6 +16,7 @@ for myself.
 ~
 
 > You must unlearn what you have learned.
+>
 > _Master Yoda_
 
 
