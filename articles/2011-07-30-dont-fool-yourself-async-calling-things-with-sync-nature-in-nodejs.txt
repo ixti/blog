@@ -164,8 +164,8 @@ will be processed while clerk will be serving one came after.
 Yes, sometimes, probably, this behavior is what you really want. For example,
 it's OK to asynchronously read/write some big amount of data, so you'll be able
 to serve other clients with "smaller" needs, because in this case the one
-requested "long taking" operation will not see big difference (you won't mention
-10 cents when you are talking about prices >100 Euros. In opposite side you will
-mention extra 10 cents if the cost was 15 cents only. So pay attention on what
-are you doing, don't act as a monkey, repeating someones mantras, especially
-when that person see nothing further than his nose.
+requested "long taking" operation will not see big difference, just as you won't
+mention 10 cents when you are talking about prices >100 Euros. In opposite side
+you will mention extra 10 cents if the cost was 15 cents only. So pay attention
+on what are you doing, don't act as a monkey, repeating someones mantras,
+especially when that person see nothing further than his nose.
