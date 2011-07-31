@@ -65,7 +65,7 @@ module Toto
     def extra_info date, tags = nil
       info = "Date: #{date}"
       unless tags.nil? || tags.empty?
-        info << "~ Tags: " << tags.collect{|t| "<a href='#{t.path}'>#{t.title}</a>"}.join(', ')
+        info << " ~ Tags: " << tags.collect{|t| "<a href='#{t.path}'>#{t.title}</a>"}.join(', ')
       end
       info
     end
