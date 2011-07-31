@@ -3,6 +3,7 @@
   <% for entry in archives %>
     <li>
       <a href="<%= entry.path %>"><%= entry.title %></a>
+      <div class="extra"><%= extra_info entry.date, entry.tags %></div>
     </li>
   <% end %>
 </ul>

@@ -60,6 +60,19 @@ if ENV['RACK_ENV'] == 'development'
 end
 
 
+module Toto
+  module Template
+    def extra_info date, tags = nil
+      info = "Date: #{date}"
+      unless tags.nil? || tags.empty?
+        info << "~ Tags: " << tags.collect{|t| "<a href='#{t.path}'>#{t.title}</a>"}.join(', ')
+      end
+      info
+    end
+  end
+end
+
+
 toto = Toto::Server.new do
   set :author,      "Aleksey V. Zapparov AKA ixti"
   set :title,       "ixti's personal sandbox"

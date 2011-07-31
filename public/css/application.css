@@ -226,13 +226,17 @@ header a, header a:visited { color: #000; text-decoration: none; }
 #header #title { width: 600px; height: 32px; margin: 10px 0px 20px; line-height: 32px; float: left; }
 #header #moto { width: 320px; height: 32px; margin: 10px 0px 20px; line-height: 32px; font-style: italic; font-size: 0.8em; color: #777; text-align: right; float: right; clear: right; }
 
+.extra { font-size: 0.7em; font-style: italic; color: #ccc;}
+.extra a, .extra a:visited { color: #ccc; text-decoration: none; }
+.extra a:hover { color: #333; text-decoration: underline; }
+
+li .extra { margin: -0.5em 0.25em 0.75em }
+
 .post { margin-bottom: 2em; }
 .post:last-child { margin-bottom: 1em; }
 .post header { margin-bottom: 5px; }
 .post header .path { font-size: 0.9em; }
-.post header .extra { font-style: italic; font-size: 0.8em; color: #ccc; margin-top: -20px; }
-.post header .extra a { color: #ccc; }
-.post header .extra a:hover { color: #333; }
+.post header .extra { margin-top: -20px; }
 .post p:first-child { margin-top: 0; }
 .post p:last-child { margin-bottom: 0; }
 .post .more { font-size: 1.1em; font-style: italic; text-align: right; }

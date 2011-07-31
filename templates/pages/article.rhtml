@@ -2,7 +2,7 @@
   <header>
     <div class="path">guest@blog.ixti.ru:~/<%= keys.include?(:category) ? category : '' %>$</div>
     <h2><%= title %></h2>
-    <div class="extra">Posted on <%= date %> and tagged with <%= tags.collect{|t| "<a href='#{t.path}'>#{t.title}</a>"}.join(', ') %></div>
+    <div class="extra"><%= extra_info date, tags %></div>
   </header>
 
   <section class="content">
