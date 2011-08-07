@@ -43,8 +43,8 @@ but why I choose Toto? I just like it. That's all.
 This is my first post with Toto. There are still lots of things I need to
 finish. So next month I will:
 
-* Polish links styles - right now it's pretty hard to distinguish grey links
-  from text which is dark-grey. And shadow on heading links looks awfull.
+* ~~Polish links styles - right now it's pretty hard to distinguish grey links
+  from text which is dark-grey. And shadow on heading links looks awfull.~~
 * Migrate all files from old blog into `/public/downloads/`.
 * Recheck migrated old posts to be valid and readable.
 * Add categories support.
