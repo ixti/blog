@@ -1,5 +1,5 @@
 --- 
-title: What is so cool about Node.JS?
+title: ~DRAFT~ What is so cool about Node.JS?
 category: development
 tags: node.js, benchmark, io, async, sync
 date: 07/08/2011
@@ -8,10 +8,13 @@ Some time ago I was really very excited about [Node.JS]. About all that
 marketing bullshit about asynchronous (on a single core) execution and so on.
 I'm not gonna start another holy-war - let's leave it for rusty (in it's most)
 Node.JS community, keenly responsive to any alternative idea, just like holy
-Inquisition. Instead, a friend of mine (_Hi, MBG!_) and I made some benchmarks
-most interesting things for us, such as working with files, mathematics and
+inquisition. Instead, a friend of mine (_Hi, MBG!_) and I made some benchmarks
+of most interesting things for us, such as working with files, mathematics and
 some HTTP servings.
 
 [Node.JS]: http://nodejs.org/
 
 ~
+
+First of all I would like to describe testing environment (my laptop), and some
+basics about testing.
