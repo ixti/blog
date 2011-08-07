@@ -1,4 +1,5 @@
 require 'toto'
+require 'fileutils'
 
 @config = Toto::Config::Defaults
 @editor = ENV['EDITOR'] || ""
@@ -14,20 +15,31 @@ task :new do
   article << "\n"
   article << "Once upon a time...\n\n"
 
-  path = "#{Toto::Paths[:articles]}/#{Time.now.strftime("%Y-%m-%d")}#{'-' + slug if slug}.#{@config[:ext]}"
+  name = "#{Time.now.strftime("%Y-%m-%d")}#{'-' + slug if slug}"
+  post_path = "#{Toto::Paths[:articles]}/#{name}.#{@config[:ext]}"
+  bits_path = "bits/#{name}"
 
-  unless File.exist? path
-    File.open(path, "w") do |file|
+  unless File.exist? post_path
+    File.open(post_path, "w") do |file|
       file.write article
     end
 
-    if !@editor.empty? && ask('Edit? ').upcase[0] == 'Y'
-      system "#{@editor} #{path}"
+    if ask('With bits? ').upcase[0] == 'Y'
+      FileUtils::mkdir_p bits_path
+      File.open("#{bits_path}/descript.ion", "w") do |file|
+        file.puts "Bits of #{title}"
+      end
+
+      toto "bits will be kept under #{bits_path}."
     end
 
-    toto "an article was created for you at #{path}."
+    if !@editor.empty? && ask('Edit? ').upcase[0] == 'Y'
+      system "#{@editor} #{post_path}"
+    end
+
+    toto "an article was created for you at #{post_path}."
   else
-    toto "I can't create the article, #{path} already exists."
+    toto "I can't create the article, #{post_path} already exists."
   end
 end
 
