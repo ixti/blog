@@ -1,5 +1,5 @@
 --- 
-title: ~DRAFT~ What is so cool about Node.JS?
+title: What is so cool about Node.JS?
 category: development
 tags: node.js, benchmark, io, async, sync
 date: 07/08/2011
