@@ -2,8 +2,8 @@ require 'bundler'
 Bundler.require
 
 use Rack::CommonLogger
-use Rack::Static, { :urls => [ '/css', '/images', '/LICENSE', '/blank.htm',
-                               '/favicon.ico', '/robots.txt' ],
+use Rack::Static, { :urls => [ '/css', '/images', '/js', '/LICENSE',
+                               '/blank.htm', '/favicon.ico', '/robots.txt' ],
                     :root => 'public' }
 use Rack::Rewrite do
   r301 %r{^/feed$}, 'http://feeds.feedburner.com/ixti'
