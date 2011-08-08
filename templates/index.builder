@@ -1,5 +1,5 @@
 xml.instruct!
-xml.feed "xmlns" => "http://www.w3.org/2005/Atom" do
+xml.feed "xmlns" => "http://www.w3.org/2005/Atom", "xml:base" => @config[:url] do
   xml.title @config[:title]
   xml.id @config[:url]
   xml.updated articles.first[:date].iso8601 unless articles.empty?
