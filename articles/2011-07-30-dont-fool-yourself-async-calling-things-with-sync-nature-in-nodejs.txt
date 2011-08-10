@@ -1,4 +1,5 @@
 ---
+slug: dont-fool-yourself-async-calling-things-with-sync-nature-in-nodejs
 title: Don't fool yourself async-calling things with sync nature in Node.JS
 category: development
 tags: node.js, callback, asynchronous, syscall

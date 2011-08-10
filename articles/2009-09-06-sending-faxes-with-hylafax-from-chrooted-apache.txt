@@ -1,4 +1,5 @@
 ---
+slug: sending-faxes-with-hylafax-from-chrooted-apache
 title: Send­ing faxes with hyla­fax from chrooted Apache
 author: Aleksey V Zapparov AKA ixti
 date: 06/09/2009

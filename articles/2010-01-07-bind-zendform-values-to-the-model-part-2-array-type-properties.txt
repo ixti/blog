@@ -1,4 +1,5 @@
 ---
+slug: bind-zendform-values-to-the-model-part-2-array-type-properties
 title: Bind Zend_Form val­ues to the model. Part 2 (Array-type properties)
 author: Aleksey V Zapparov AKA ixti
 date: 07/01/2010

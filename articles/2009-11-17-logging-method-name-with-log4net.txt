@@ -1,4 +1,5 @@
 ---
+slug: logging-method-name-with-log4net
 title: Log­ging method name with Log4Net
 author: Aleksey V Zapparov AKA ixti
 date: 17/11/2009

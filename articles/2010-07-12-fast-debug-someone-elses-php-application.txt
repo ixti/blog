@@ -1,4 +1,5 @@
 ---
+slug: fast-debug-someone-elses-php-application
 title: Fast debug someone else's PHP application
 author: Aleksey V Zapparov AKA ixti
 date: 12/07/2010

@@ -1,4 +1,5 @@
 ---
+slug: qtip-v100-rc3-for-jquery-v142
 title: qTip v.1.0.0-rc3 for jQuery v.1.4.2
 author: Aleksey V Zapparov AKA ixti
 date: 18/07/2010

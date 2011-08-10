@@ -1,4 +1,5 @@
---- 
+---
+slug: moving-to-the-wonderland-of-oz 
 title: Moving to the wonderland of Oz!
 tags: toto, wordpress, migration, ruby, life
 date: 25/07/2011

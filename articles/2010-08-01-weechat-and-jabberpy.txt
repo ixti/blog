@@ -1,4 +1,5 @@
 ---
+slug: weechat-and-jabberpy
 title: WeeChat and jabber.py
 author: Aleksey V Zapparov AKA ixti
 date: 01/08/2010

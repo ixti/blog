@@ -1,4 +1,5 @@
 ---
+slug: system-tray-icon-with-ruby-andqt4
 title: Sys­tem tray icon with Ruby and QT4
 author: Aleksey V Zapparov AKA ixti
 date: 23/06/2010

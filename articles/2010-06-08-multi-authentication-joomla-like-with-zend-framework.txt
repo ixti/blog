@@ -1,4 +1,5 @@
 ---
+slug: multi-authentication-joomla-like-with-zend-framework
 title: Multi-authentication (Joomla! like) with Zend Framework
 author: Aleksey V Zapparov AKA ixti
 date: 08/06/2010

@@ -1,4 +1,5 @@
 ---
+slug: translating-variable-strings-with-gettext-or-how-to-translate-doctrines-enums
 title: Translating variable strings with gettext or "How to translate Doctrine's enums"
 author: Aleksey V Zapparov AKA ixti
 date: 03/09/2010

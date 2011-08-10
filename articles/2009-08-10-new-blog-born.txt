@@ -1,4 +1,5 @@
 ---
+slug: new-blog-born
 title: New blog born...
 author: Aleksey V Zapparov AKA ixti
 date: 10/08/2009

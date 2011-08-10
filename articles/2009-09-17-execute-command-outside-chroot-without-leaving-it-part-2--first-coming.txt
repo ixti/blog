@@ -1,4 +1,5 @@
 ---
+slug: execute-command-outside-chroot-without-leaving-it-part-2--first-coming
 title: Exe­cute com­mand out­side chroot without lea­ving it. Part 2 — First coming.
 author: Aleksey V Zapparov AKA ixti
 date: 17/09/2009

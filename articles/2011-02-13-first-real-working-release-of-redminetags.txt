@@ -1,4 +1,5 @@
 ---
+slug: first-real-working-release-of-redminetags
 title: First real-working release of redmine_tags
 author: Aleksey V Zapparov AKA ixti
 date: 13/02/2011

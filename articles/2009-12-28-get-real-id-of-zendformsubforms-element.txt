@@ -1,4 +1,5 @@
 ---
+slug: get-real-id-of-zendformsubforms-element
 title: Get real ID of Zend_Form_SubForm’s Element
 author: Aleksey V Zapparov AKA ixti
 date: 28/12/2009

@@ -1,4 +1,5 @@
 ---
+slug: install-packages-from-deb-withapt
 title: Install pack­ages from .deb with apt
 author: Aleksey V Zapparov AKA ixti
 date: 11/10/2009

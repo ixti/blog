@@ -1,4 +1,5 @@
 ---
+slug: add-tags-to-the-issues-in-redmine-project-manager
 title: Add tags to the issues in Redmine project manager
 author: Aleksey V Zapparov AKA ixti
 date: 28/11/2010

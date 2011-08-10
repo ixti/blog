@@ -1,4 +1,5 @@
 ---
+slug: complex-mutators-for-doctrinev1x
 title: Com­plex mutat­ors for Doctrine v.1.x
 author: Aleksey V Zapparov AKA ixti
 date: 02/06/2010

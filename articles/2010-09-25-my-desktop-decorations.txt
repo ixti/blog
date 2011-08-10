@@ -1,4 +1,5 @@
 ---
+slug: my-desktop-decorations
 title: My desktop decorations
 author: Aleksey V Zapparov AKA ixti
 date: 25/09/2010

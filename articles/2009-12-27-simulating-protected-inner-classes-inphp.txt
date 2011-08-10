@@ -1,4 +1,5 @@
 ---
+slug: simulating-protected-inner-classes-inphp
 title: Sim­u­lat­ing pro­tec­ted inner classes in PHP
 author: Aleksey V Zapparov AKA ixti
 date: 27/12/2009

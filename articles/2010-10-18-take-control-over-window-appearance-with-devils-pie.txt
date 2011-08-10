@@ -1,4 +1,5 @@
 ---
+slug: take-control-over-window-appearance-with-devils-pie
 title: Take control over window appearance with Devil's Pie
 author: Aleksey V Zapparov AKA ixti
 date: 18/10/2010

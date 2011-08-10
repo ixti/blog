@@ -1,4 +1,5 @@
 ---
+slug: open-urls-by-hot-keys-with-greasemonkey
 title: Open URLs by hot-keys with Greasemonkey
 author: Aleksey V Zapparov AKA ixti
 date: 27/12/2009

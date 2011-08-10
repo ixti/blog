@@ -1,4 +1,5 @@
 ---
+slug: sudo-changes-in-debian-gnulinux-squeeze
 title: sudo changes in Debian GNU/Linux "squeeze"
 author: Aleksey V Zapparov AKA ixti
 date: 25/10/2010

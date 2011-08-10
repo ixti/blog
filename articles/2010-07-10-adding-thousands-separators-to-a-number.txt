@@ -1,4 +1,5 @@
 ---
+slug: adding-thousands-separators-to-a-number
 title: Adding thousands separators to a number
 author: Aleksey V Zapparov AKA ixti
 date: 10/07/2010

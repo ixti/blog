@@ -1,4 +1,5 @@
 ---
+slug: disallow-any-browser-cache-any-form-fielddata
 title: Dis­al­low any browser cache any form field data
 author: Aleksey V Zapparov AKA ixti
 date: 08/10/2009

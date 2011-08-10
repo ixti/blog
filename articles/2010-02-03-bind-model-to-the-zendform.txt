@@ -1,4 +1,5 @@
 ---
+slug: bind-model-to-the-zendform
 title: Bind model to the Zend_Form…
 author: Aleksey V Zapparov AKA ixti
 date: 03/02/2010

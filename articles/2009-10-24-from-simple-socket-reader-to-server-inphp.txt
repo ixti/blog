@@ -1,4 +1,5 @@
 ---
+slug: from-simple-socket-reader-to-server-inphp
 title: From simple socket reader to server in PHP
 author: Aleksey V Zapparov AKA ixti
 date: 24/10/2009

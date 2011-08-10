@@ -1,4 +1,5 @@
 ---
+slug: test-if-request-is-really-dispatchable-in-zend-framework
 title: Test if request is really dis­patch­able in Zend Framework
 author: Aleksey V Zapparov AKA ixti
 date: 02/02/2010
