@@ -18,14 +18,16 @@
 
   <script type="text/javascript">
   (function (queue) {
-    window.require = function require(src) { queue.push(src); }
+    window.require = function require(src, async) {
+      queue.push({src: src, async: !!async);
+    }
     window.init = function init() {
       var i, l, head = document.getElementsByTagName('head')[0];
       for (i = 0, l = queue.length; i < l; i++) {
         (function (s) {
-          s.async = true;
+          s.async = queue[i].async;
           s.type = 'text/javascript';
-          s.src = queue[i];
+          s.src = queue[i].src;
           head.appendChild(s);
         })(document.createElement('script'));
       }
