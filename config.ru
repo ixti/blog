@@ -70,12 +70,6 @@ module Toto
       info
     end
   end
-
-  class Article
-    def id
-      File.ctime(@obj).to_f rescue article.url
-    end
-  end
 end
 
 
