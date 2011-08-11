@@ -224,6 +224,7 @@ header a, header a:visited { color: #000; text-decoration: none; }
 
 #header { margin-bottom: 1em; }
 #header * { color: #000; text-decoration: none; }
+#header img { width: 920px; height: 198px; }
 #header #title { width: 600px; height: 32px; margin: 10px 0px 20px; line-height: 32px; float: left; }
 #header #moto { width: 320px; height: 32px; margin: 10px 0px 20px; line-height: 32px; font-style: italic; font-size: 0.8em; color: #777; text-align: right; float: right; clear: right; }
 
