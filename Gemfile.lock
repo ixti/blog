@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/ixti/toto.git
-  revision: 034a7027438eba43c7ec60b7df44e6c8ad88a9c9
+  revision: 3af57e84b609baecb9c5dbfed1c4f6de1a20f942
   branch: master
   specs:
     toto (0.4.9)
