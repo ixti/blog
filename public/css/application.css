@@ -261,6 +261,60 @@ li .extra { margin: -0.5em 0.25em 0.75em }
 
 
 /* =============================================================================
+   Highlight.JS styles
+   Author: Aleksey V Zapparov AKA ixti <http://www.ixti.ru/>
+   Based on original work of Vasily Polovnyov <vast@whiteants.net>
+   ========================================================================== */
+
+
+pre code { display: block; padding: 0.5em; color: #000; }
+pre .comment, pre .template_comment, pre .diff .header, pre .javadoc { color: #998; font-style: italic }
+pre .keyword, pre .css .rule .keyword, pre .winutils, pre .javascript .title, pre .lisp .title, pre .subst { color: #000; font-weight: bold } 
+pre .number, pre .hexcolor { color: #40a070 }
+pre .string, pre .tag .value, pre .phpdoc, pre .tex .formula { color: #d14 }
+pre .title, pre .id { color: #900; font-weight: bold }
+pre .javascript .title, pre .lisp .title, pre .subst { font-weight: normal }
+pre .class .title, pre .haskell .label, pre .tex .command { color: #458; font-weight: bold }
+pre .tag, pre .tag .title, pre .rules .property, pre .django .tag .keyword { color: #000080; font-weight: normal }
+pre .attribute, pre .variable, pre .instancevar, pre .lisp .body { color: #008080 }
+pre .regexp { color: #009926 }
+pre .class { color: #458; font-weight: bold } 
+pre .symbol, pre .ruby .symbol .string, pre .ruby .symbol .keyword, pre .ruby .symbol .keymethods, pre .lisp .keyword, pre .tex .special, pre .input_number { color: #990073 }
+pre .builtin, pre .built_in, pre .lisp .title { color: #0086b3 }
+pre .preprocessor, pre .pi, pre .doctype, pre .shebang, pre .cdata { color: #999; font-weight: bold } 
+pre .deletion { background: #fdd }
+pre .addition { background: #dfd } 
+pre .diff .change { background: #0086b3 } 
+pre .chunk { color: #aaa } 
+pre .tex .formula { opacity: 0.5; }
+
+
+/* =============================================================================
+   jQuery tipsy styles
+   Author: Jason Frame (jason@onehackoranother.com)
+   ========================================================================== */
+
+
+.tipsy { font-size: 10px; position: absolute; padding: 5px; z-index: 100000; }
+.tipsy-inner { background-color: #000; color: #FFF; max-width: 200px; padding: 5px 8px 4px 8px; text-align: center; }
+.tipsy-inner { border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px; }
+.tipsy-inner { box-shadow: 0 0 5px #000000; -webkit-box-shadow: 0 0 5px #000000; -moz-box-shadow: 0 0 5px #000000; }
+.tipsy-arrow { position: absolute; width: 0; height: 0; border: 5px solid transparent; }
+.tipsy-arrow-n { border-bottom-color: #000; }
+.tipsy-arrow-s { border-top-color: #000; }
+.tipsy-arrow-e { border-left-color: #000; }
+.tipsy-arrow-w { border-right-color: #000; }
+.tipsy-n .tipsy-arrow, .tipsy-nw .tipsy-arrow, .tipsy-ne .tipsy-arrow { top: 0; border-top: none; }
+.tipsy-s .tipsy-arrow, .tipsy-sw .tipsy-arrow, .tipsy-se .tipsy-arrow { bottom: 0; border-bottom: none; }
+.tipsy-n .tipsy-arrow, .tipsy-s .tipsy-arrow { left: 50%; margin-left: -5px; }
+.tipsy-nw .tipsy-arrow, .tipsy-sw .tipsy-arrow { left: 10px; }
+.tipsy-ne .tipsy-arrow, .tipsy-se .tipsy-arrow { right: 10px; }
+.tipsy-e .tipsy-arrow, .tipsy-w .tipsy-arrow { top: 50%; margin-top: -5px; }
+.tipsy-e .tipsy-arrow { right: 0; border-right: none; }
+.tipsy-w .tipsy-arrow { left: 0; border-left: none; }
+
+
+/* =============================================================================
    Non-semantic helper classes
    Please define your styles before this section.
    ========================================================================== */
