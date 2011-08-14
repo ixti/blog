@@ -83,7 +83,7 @@ mark { background: #ff0; color: #000; font-style: italic; font-weight: bold; }
 
 /* Redeclare monospace font family: en.wikipedia.org/wiki/User:Davidgothberg/Test59 */
 pre { background: #f7f7f7; border-radius: 3px; }
-pre, code, kbd, samp { font-family: 'Anonymous Pro', 'Bitstream Vera Sans', 'Monaco', 'Courier New', monospace; font-size: 1em; }
+pre, code, kbd, samp { font-family: 'Anonymous Pro', 'Bitstream Vera Sans Mono', 'Courier New', monospace; font-size: 1em; }
 
 /* Improve readability of pre-formatted text in all browsers */
 pre { white-space: pre; white-space: pre-wrap; word-wrap: break-word; }
