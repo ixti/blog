@@ -1,9 +1,7 @@
 ---
-slug: dont-fool-yourself-async-calling-things-with-sync-nature-in-nodejs
-title: Don't fool yourself async-calling things with sync nature in Node.JS
-category: development
-tags: node.js, callback, asynchronous, syscall
-date: 30/07/2011
+title:  Don't fool yourself async-calling things with sync nature in Node.JS
+tags:   node.js, callback, asynchronous, syscall
+date:   30/07/2011
 
 I bet almost everybody knows about [Node.JS] these days. By today it's the most
 popular implementation of [CommonJS]. Because of "asynchronous event-driven

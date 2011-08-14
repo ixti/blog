@@ -1,0 +1,35 @@
+--- 
+title:  Grand blog clean-up
+tags:   toto, life
+date:   14/08/2011
+
+First of all, please excuse me for bloating your news reader, I promise, I will
+not do this again. Today I have finally implemented all the things I needed in
+my [fork of toto][1]. Now it have tags, categories, better summary handling,
+better URLs handling and so on. Because of big changes in toto and because I
+found most of the old posts useless to me I have cleaned up whole blog.
+
+~
+
+### What does it means for me?
+
+I think about this as about new page in my attempt of personal growth. Probably
+someone would mention that all PHP related posts were removed. That doesn't mean
+that I become blind fan of something else. No. That's only because most of my
+old posts were about PHP, and all of them seemed useless for me today (at least
+I don't need them). As my blog is now under source control anybody who
+interested - can get all removed posts easily - but bewarethey are not
+formatted - they look like shit :))
+
+
+### Why all these changes?
+
+Well, that's pretty simple. Although I really felt in love with [toto][2], it
+lack of some features I wanted to see in it. So after I have started hacking it
+I found some places I decided to change (pull requests are awaiting cloudhead's
+decision) somoe of core features. And now I can tell that toto is absolutely all
+I dreamed about for blogging :))
+
+
+[1]: https://github.com/ixti/toto
+[2]: https://github.com/cloudhead/toto

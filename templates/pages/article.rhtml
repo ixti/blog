@@ -1,8 +1,7 @@
 <article class="post">
   <header>
-    <div class="path">guest@blog.ixti.ru:~/<%= keys.include?(:category) ? category : '' %>$</div>
     <h2><%= title %></h2>
-    <div class="extra"><%= extra_info date, tags %></div>
+    <div class="extra"><%= extra_info date, category, tags %></div>
   </header>
 
   <section class="content">
