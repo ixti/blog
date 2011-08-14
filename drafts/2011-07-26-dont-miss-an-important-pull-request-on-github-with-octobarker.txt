@@ -1,0 +1,55 @@
+--- 
+title: Don't miss an important pull request on GitHub with Octobarker
+category: development
+tags: ruby, github, atom, feed, libnotify, notifications
+date: 26/07/2011
+
+Everybody says that's everything goes socialized, and with such services as
+[GitHub] even software development. To be honest, I totally disagree with such
+definition of _socializing_. For me _socializing_ is when you talk with people,
+walk with people, having fun with people _personally_. Without computers.
+Computers are great for communication, I would be fool arguing against it, but
+they are not socializing stuff. It's sad to talk with millions while stay alone.
+But this post is about my new tiny app and not about assbooks and so on.
+
+[GitHub]: https://www.github.com/
+
+~
+
+I'm really stand against all those strange de-socializing services, but I love to
+stay in touch with latest updates on software :)) Not about who and when went to
+the toilet, but about who pull requests who and what. In fact for me it's just
+some kind of "news" about software right from the front-line. That's why I my
+octobarker (formerly called `gh-informer`).
+
+It's a tiny app that will notify you about changes in the feed you will provide
+(either your private one or someone's public one) with [libnotify] (Growl-alike
+notification for Linux). The usage is really simple:
+
+
+```
+$ ./octobarker https://github.com/ixti.atom
+```
+
+By default _octobarker_ will poll feed every 3 minutes. But you may easily
+change interval with `--interval=<NUM>` argument, specifying interval in
+minutes, e.g. you can ask it poll feed every hour:
+
+```
+$ ./octobarker --interval=60 https://github.com/ixti.atom
+```
+
+### Requirements
+
+To run it, you'll need Ruby 1.9.x and following gems installed:
+
+* [nokogiri](http://nokogiri.org/)
+* [libnotify](https://github.com/splattael/libnotify) for Ruby
+
+### Download
+
+You can grab the latest version from [repository] on GitHub.
+
+
+[libnotify]: http://developer.gnome.org/libnotify/
+[repository]: https://github.com/ixti/octobarker
