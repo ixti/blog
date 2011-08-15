@@ -1,8 +1,7 @@
 --- 
-title: Don't miss an important pull request on GitHub with Octobarker
-category: development
-tags: ruby, github, atom, feed, libnotify, notifications
-date: 26/07/2011
+title:  Don't miss anything on GitHub with Octobarker
+tags:   ruby, github, atom, feed, libnotify, notifications, growl
+date:   26/07/2011
 
 Everybody says that's everything goes socialized, and with such services as
 [GitHub] even software development. To be honest, I totally disagree with such
