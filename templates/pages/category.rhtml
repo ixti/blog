@@ -1,0 +1,9 @@
+<h2>Articles under <i>&laquo;<%= category %>&raquo;</i> category</h2>
+<ul>
+  <% for entry in archives %>
+    <li>
+      <a href="<%= entry.path %>"><%= entry.title %></a>
+      <div class="extra"><%= extra_info entry.date, entry.category, entry.tags %></div>
+    </li>
+  <% end %>
+</ul>
