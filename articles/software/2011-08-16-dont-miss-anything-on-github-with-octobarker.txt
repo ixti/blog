@@ -1,0 +1,61 @@
+--- 
+title:  Don't miss anything on GitHub with Octobarker
+tags:   ruby, github, atom, feed, libnotify, notifications, growl
+date:   16/08/2011
+
+Every day we hear that _people are social animals_, and that Internet helps
+people to get more socialized, and that with with such services as [GitHub][1]
+even software development. Bullshit! Internet and technologies _desocialize_
+people. I believe that social life is when you talk with people, when you
+walk with people, when you have fun with people. Riots are more social acts
+than twitting about what you had eat today. I think that there's nothing more
+pathetic then "chatting" with 1K of "friends" staying alone in the room. But
+this post is about my new tiny app and not about assbooks and so on.
+
+~
+
+Software development runs very fast and as a programmer I love to stay in touch
+what was proposed to what, which changes are upcoming and so on. I got this kind
+of wishes when started development of one project with [Node.JS][2], where API
+(core and 3rd party modules) changes almost every month. So I really want to
+know about "features" of "stable" version of "API" ;))
+
+Another reason was, simply wish to write something in Ruby, after hard day of
+coding with JavaScript. And by some reason, I like this notification bubbles.
+I really don't understand why...
+
+
+### What is octobarker
+
+Octobarker is a small application written in Ruby, and [available][3] free under
+terms of GNU/GPLv3. It simply fetches given GitHub URL every _N_ minute and
+pop ups a notification bubble on every new entry.
+
+<center>![Octobarker Screenshot][4]</center>
+
+
+### Pre-requirements
+
+- Ruby 1.8.7 or 1.9.2
+- Bundler (`$ gem install bundler`)
+
+
+### Getting up and running
+
+```
+$ git clone git://github.com/ixti/octobarker.git
+$ cd octobarker
+$ bundle install
+$ ./bin/octobarker -i 0.5 https://github.com/ixti.atom
+```
+
+For possible list of options run it with `--help`:
+
+```
+$ ./bin/octobarker --help
+```
+
+[1]: https://www.github.com/
+[2]: http://nodejs.org/
+[3]: https://github.com/ixti/octobarker
+[4]: /images/articles/2011-08-16/octobarker.png
