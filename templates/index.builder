@@ -1,3 +1,14 @@
+BASEURL = "http://#{@config[:url].sub("http://", '')}/#{@config[:prefix]}/"
+
+def fix html
+  doc = Nokogiri::HTML(html)
+  doc.xpath('//img').each do |img|
+    src = img.attr('src')
+    img.set_attribute('src', (BASEURL + src).squeeze('/')) if src =~ /^\/[^\/]/
+  end
+  doc.at('body').inner_html
+end
+
 xml.instruct!
 xml.feed "xmlns" => "http://www.w3.org/2005/Atom", "xml:base" => @config[:url] do
   xml.title @config[:title]
@@ -16,8 +27,8 @@ xml.feed "xmlns" => "http://www.w3.org/2005/Atom", "xml:base" => @config[:url] d
       xml.published article[:date].iso8601
       xml.updated article[:date].iso8601
       xml.author { xml.name @config[:author] }
-      xml.summary article.summary, "type" => "html"
-      xml.content article.body, "type" => "html"
+      xml.summary fix(article.summary), "type" => "html"
+      xml.content fix(article.body), "type" => "html"
     end
   end
 end
