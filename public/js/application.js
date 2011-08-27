@@ -76,6 +76,8 @@ var hljs=new function(){function l(o){return o.replace(/&/gm,"&amp;").replace(/<
     });
     // init tipsy on tag list
     $('#tags-cloud a').tipsy({gravity: 's'});
+    // reveal QR image after everything was loaded
+    (function ($qr) { $qr.parent().html($qr.text()); })($('#qr-code noscript'));
   });
 })(jQuery);
 // vim:ts=2:sw=2

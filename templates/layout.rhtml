@@ -88,6 +88,13 @@
       copyright &copy; 2010 Aleksey V Zapparov AKA ixti
     </footer>
   </div>
+
+  <% if @config[:qrcode] %>
+    <div id="qr-code" class="visuallyhidden">
+      <noscript><img src="<%= @config[:qrcode] %>"></noscript>
+    </div>
+  <% end %>
+
   <script type="text/javascript">
     require('/js/jquery.js');
     require('/js/application.js');
