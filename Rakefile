@@ -1,5 +1,6 @@
-require 'toto'
 require 'fileutils'
+require 'bundler'
+Bundler.require
 
 @config = Toto::Config::Defaults
 @editor = ENV['EDITOR'] || ""
