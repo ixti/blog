@@ -48,26 +48,28 @@ if !@editor.empty?
 
   desc "Edit artile."
   task :edit do
-    articles = Dir.entries(Toto::Paths[:articles])
-    
-    articles.collect!{|f| "#{Toto::Paths[:articles]}/#{f}"}
-    articles.select!{|f| File.file? f}
-    articles.sort!.reverse!
+    articles = Dir["#{Toto::Paths[:articles]}/**/*"].select{|f| File.file? f}.sort_by{|f| File.basename f}.reverse!
   
     begin
       page = articles.slice!(0, @articles_per_page)
-      page.each_with_index {|f, i| puts "%2d #{f}" % [i + 1]}
+      page.each_with_index {|f, i| puts "%2d %s" % [i + 1, File.basename(f)]}
 
       puts "Enter number to edit, or nothing to skip to next page"
       id = ask "> "
     end while articles.count > 0 && id.empty?
 
-    exit 0 if id.upcase == "Q"
-
-    id = id.to_i
-    unless 0 < id && id < @articles_per_page
-      toto "wrong article number"
-      exit 1
+    case
+      when "Q" == id.upcase
+        exit 0
+      when id.empty?
+        toto "no more articles"
+        exit 0
+      else
+        id = id.to_i
+        unless 0 < id && id < @articles_per_page
+          toto "wrong article number"
+          exit 1
+        end
     end
 
     system "#{@editor} #{page[id - 1]}"
