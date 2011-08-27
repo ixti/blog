@@ -48,6 +48,7 @@ begin
     data
   end
 rescue LoadError
+  puts 'WARN: QR code support disabled - bundler failed to load required gems.'
   qrcode = false
 end
 
