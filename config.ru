@@ -14,7 +14,8 @@ begin
   qrcode = '/qr.png'
   qrscale = 2
 
-  # return PNG image with QR code of referrer
+  # return PNG image with QR Code of referrer
+  # "QR Code" is registered trademark of DENSO WAVE INCORPORATED
   use Rack::SimpleEndpoint, qrcode => :get do |req, res|
     # allow qr encoding from ourselves only
     unless req.referer.start_with? "#{req.env['rack.url_scheme']}://#{req.env['HTTP_HOST']}/"
@@ -48,7 +49,7 @@ begin
     data
   end
 rescue LoadError
-  puts 'WARN: QR code support disabled - bundler failed to load required gems.'
+  puts 'WARN: QR Code support disabled - bundler failed to load required gems.'
   qrcode = false
 end
 

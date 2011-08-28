@@ -153,8 +153,19 @@ end
 img.write OUTPUT
 ```
 
+
+### Legal Note
+
+"QR Code" is registered trademark of [DENSO WAVE][6] INCORPORATED.
+
+This registered trademark applies only for the word "QR Code", and not for the
+QR Code pattern (image). See [QR Code Patent FAQ][7] for more info.
+
+
 [1]: http://en.wikipedia.org/wiki/QR_code
 [2]: http://www.wikipedia.org/
 [3]: http://whomwah.github.com/rqrcode/
 [4]: https://github.com/ixti/blog
 [5]: https://github.com/rmagick/rmagick
+[6]: http://www.denso-wave.com/en/adcd/
+[7]: http://www.denso-wave.com/qrcode/faqpatent-e.html

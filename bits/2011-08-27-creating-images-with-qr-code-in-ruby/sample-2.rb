@@ -2,6 +2,7 @@ require 'rqrcode'
 require 'RMagick'
 
 # usage: ruby sample-2.rb "http://www.example.com" /tmp/demo.png
+# "QR Code" is registered trademark of DENSO WAVE INCORPORATED
 
 INPUT   = ARGV[0]
 OUTPUT  = ARGV[1]

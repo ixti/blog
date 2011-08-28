@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<head><title>QR code string to canvas</title></head>
+<head><title>QR Code string to canvas</title></head>
 <body>
 <canvas id="qr">####### ### #  # ####  ## #######
 #     # # # #### ### ##   #     #
@@ -39,7 +39,7 @@
   var scale   = 4,                              // each dot's size in pixels
       dark    = '#',                            // char representing "dark" dot
       qr      = document.getElementById('qr'),  // canvas element
-      data    = qr.textContent,                 // QR code as a string
+      data    = qr.textContent,                 // QR Code as a string
       context = qr.getContext('2d');            // context used to draw dots
 
   // jQuery alike array iterator
@@ -66,6 +66,7 @@
     });
   });
 </script>
+<p>"QR Code" is registered trademark of DENSO WAVE INCORPORATED</p>
 </body>
 </html>
 
