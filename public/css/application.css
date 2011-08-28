@@ -248,7 +248,7 @@ li .extra { margin: -0.5em 0.25em 0.75em }
 .post .more { opacity: 0.15; -moz-transition: 0.5s opacity; -webkit-transition: 0.5s opacity; transition: 0.5s opacity; }
 .post:hover .more { opacity: 1; }
 
-#comments { border-top: 1px solid #ccc; padding-top: 1em; margin-top: 1em; }
+#comments, #footer { border-top: 1px solid #ccc; padding-top: 1em; margin-top: 1em; }
 
 #tags-cloud .nube-0 { font-size: 0.8em; }
 #tags-cloud .nube-1 { font-size: 0.9em; }
