@@ -154,6 +154,20 @@ img.write OUTPUT
 ```
 
 
+### Going wild
+
+Although examples above are clean enough, real life usage is much more
+interesting than an abstract horse in surrealistic vacuum. ;)) That's why I have
+added QR Code into the bottom of each page (visible on "printer-friendly"
+version of styles). Explanation of how did I made this is big enough to become
+separate article. So, you can either wait for my new post or take a look at
+sources of my blog for interesting files:
+
+* config.ru
+* templates/layout.rhtml
+* public/js/application.js
+
+
 ### Legal Note
 
 "QR Code" is registered trademark of [DENSO WAVE][6] INCORPORATED.
