@@ -248,6 +248,8 @@ li .extra { margin: -0.5em 0.25em 0.75em }
 .post .more { opacity: 0.15; -moz-transition: 0.5s opacity; -webkit-transition: 0.5s opacity; transition: 0.5s opacity; }
 .post:hover .more { opacity: 1; }
 
+#comments { border-top: 1px solid #ccc; padding-top: 1em; margin-top: 1em; }
+
 #tags-cloud .nube-0 { font-size: 0.8em; }
 #tags-cloud .nube-1 { font-size: 0.9em; }
 #tags-cloud .nube-2 { font-size: 1.0em; }
@@ -368,7 +370,7 @@ pre .tex .formula { opacity: 0.5; }
   p, h2, h3 { orphans: 3; widows: 3; }
   h2, h3 { page-break-after: avoid; }
 
-  #footer, #articles .post .more { display: none; }
+  #articles .post .more, #comments, #footer { display: none; }
   #main { border: none; box-shadow: none; }
   #qr-code { display: block; }
 }
