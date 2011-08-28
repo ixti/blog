@@ -262,7 +262,7 @@ li .extra { margin: -0.5em 0.25em 0.75em }
 #copyrights, #copyrights * { color: #555; text-shadow: 1px 1px 0px #000; }
 #copyrights a:hover { color: #999; }
 
-#qr-code { margin-top: 2em; text-align: center; }
+#qr-code { display: none; margin-top: 2em; text-align: center; }
 
 
 /* =============================================================================
@@ -368,5 +368,7 @@ pre .tex .formula { opacity: 0.5; }
   p, h2, h3 { orphans: 3; widows: 3; }
   h2, h3 { page-break-after: avoid; }
 
+  #footer, #articles .post .more { display: none; }
   #main { border: none; box-shadow: none; }
+  #qr-code { display: block; }
 }
