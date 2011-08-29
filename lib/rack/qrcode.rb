@@ -16,6 +16,11 @@
 # along with blog.ixti.ru.  If not, see <http://www.gnu.org/licenses/>.
 
 
+# 3rd party libs
+require 'rqrcode'
+require 'RMagick'
+
+
 module Rack
   # Returns PNG image with QR Code of referer URL.
   # "QR Code" is registered trademark of DENSO WAVE INCORPORATED
