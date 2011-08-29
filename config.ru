@@ -20,6 +20,10 @@ rescue LoadError
 end
 
 
+require './lib/rack/bits'
+use Rack::Bits, {:path => '/bits', :root => 'bits'}
+
+
 if ENV['RACK_ENV'] == 'development'
   use Rack::ShowExceptions
 end
