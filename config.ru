@@ -11,43 +11,9 @@ use Rack::Static, {
 
 begin
   Bundler.require :qrcode
-  qrcode = '/qr.png'
-  qrscale = 2
+  require './lib/rack/qrcode'
 
-  # return PNG image with QR Code of referrer
-  # "QR Code" is registered trademark of DENSO WAVE INCORPORATED
-  use Rack::SimpleEndpoint, qrcode => :get do |req, res|
-    # allow qr encoding from ourselves only
-    unless req.referer.start_with? "#{req.env['rack.url_scheme']}://#{req.env['HTTP_HOST']}/"
-      return :pass
-    end
-
-    qr    = RQRCode::QRCode.new(req.referer, :size => 10, :level => :l )
-    size  = qr.modules.count * qrscale
-    img   = Magick::Image.new(size, size)
-    
-    # draw matrix
-    qr.modules.each_index do |r|
-      row = r * qrscale
-    
-      qr.modules.each_index do |c|
-        col = c * qrscale
-        dot = Magick::Draw.new
-    
-        dot.fill(qr.dark?(r, c) ? 'black' : 'white')
-        dot.rectangle(col, row, col + qrscale, row + qrscale)
-        dot.draw(img)
-      end
-    end
-
-    data = img.to_blob { self.format = 'PNG' }
-    img.destroy!
-
-    res['Content-Length'] = data.bytesize.to_s
-    res['Content-Type']   = Rack::Mime.mime_type(".png")
-
-    data
-  end
+  use Rack::QRCode, {:path => (qrcode = '/qr.png'), :scale => 2}
 rescue LoadError
   puts 'WARN: QR Code support disabled - bundler failed to load required gems.'
   qrcode = false
