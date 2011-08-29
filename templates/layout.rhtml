@@ -89,10 +89,10 @@
     </footer>
   </div>
 
-  <% if @config[:qrcode] %>
-    <div id="qr-code">
-      <noscript><img src="<%= @config[:qrcode] %>"></noscript>
-    </div>
+  <% if qrcode_enabled? %>
+  <div id="qr-code">
+    <noscript><img src="<%= qrcode_img %>"></noscript>
+  </div>
   <% end %>
 
   <script type="text/javascript">

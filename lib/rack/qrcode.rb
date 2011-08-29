@@ -22,21 +22,31 @@ require 'RMagick'
 
 
 module Rack
-  # Returns PNG image with QR Code of referer URL.
+  # Returns PNG image with QR Code.
   # "QR Code" is registered trademark of DENSO WAVE INCORPORATED
+  #
+  # Simple Example
+  #
+  #   use Rack::QRCode, {
+  #     :path => '/qr.png',
+  #     :data => lambda{ |req| req.referer }
+  #   }
   class QRCode
     def initialize(app, options={})
-      @app = app
-      @path = options[:path] || '/qr.png'
+      @app, @path, @data = app, options[:path], options[:data]
+
       @scale = options[:scale] || 2
+      @allow = options[:allow] || lambda { |req, str| true }
     end
 
     def call(env)
-      unless @path == env["PATH_INFO"] and 'GET' == env['REQUEST_METHOD']
+      unless match_path?(env["PATH_INFO"]) and "GET" == env["REQUEST_METHOD"]
         @app.call(env)
       else 
         req = Request.new(env)
-        unless allow? req
+        str = @data.call(req)
+
+        unless @allow.call(req, str)
           [
             403,
             {
@@ -48,7 +58,7 @@ module Rack
           ]
         else
           # prepare image data
-          blob = qrcode(req.referer, 'PNG')
+          blob = qrcode(str, "PNG")
   
           [
             200,
@@ -83,15 +93,14 @@ module Rack
         end
       end
   
-      data = img.to_blob { self.format = format }
+      blob = img.to_blob { self.format = format }
       img.destroy!
   
-      data
+      blob
     end
 
-    def allow?(req)
-      valid = "#{req.env['rack.url_scheme']}://#{req.env['HTTP_HOST']}/"
-      !req.referer.nil? and req.referer.start_with? valid
+    def match_path?(path)
+      @path.is_a?(Regexp) ? @path.match(path.to_s) : @path == path.to_s
     end
   end
 end
