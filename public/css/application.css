@@ -224,9 +224,13 @@ header a, header a:visited { color: #000; text-decoration: none; }
 
 #header { margin-bottom: 1em; }
 #header * { color: #000; text-decoration: none; }
-#header img { width: 920px; height: 198px; }
+#header img { width: 920px; height: 198px; background-color: #000; }
 #header #title { width: 600px; height: 32px; margin: 10px 0px 20px; line-height: 32px; float: left; }
 #header #moto { width: 320px; height: 32px; margin: 10px 0px 20px; line-height: 32px; font-style: italic; font-size: 0.8em; color: #777; text-align: right; float: right; clear: right; }
+
+#menu { margin: 0px; padding: 10px 15px; background-color: #000; color: #222; font-family: 'Helvetica Neue', Helvetica, 'Nimbus Sans L', sans-serif; font-size: .9em; line-height: 1em; text-align: right; }
+#menu * { color: #555; }
+#menu a:hover { color: #ccc; text-shadow: 0px 0px 7px #fff; }
 
 .extra { font-size: 0.7em; font-style: italic; color: #ccc;}
 .extra a, .extra a:visited { color: #ccc; text-decoration: none; }
@@ -370,7 +374,7 @@ pre .tex .formula { opacity: 0.5; }
   p, h2, h3 { orphans: 3; widows: 3; }
   h2, h3 { page-break-after: avoid; }
 
-  #articles .post .more, #comments, #footer { display: none; }
+  #menu, #articles .post .more, #comments, #footer { display: none; }
   #main { border: none; box-shadow: none; }
   #qr-code { display: block; }
 }
