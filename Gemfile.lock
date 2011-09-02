@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/ixti/toto.git
-  revision: 6d08fc993da18a6d12744858591943d64fd802d9
+  revision: 0c513b4f6fa47fb2bdf3eb4ed0ab14beaea9b5fb
   specs:
     toto (0.4.9)
       builder
@@ -16,7 +16,7 @@ GEM
     rdiscount (1.6.8)
     redcarpet (1.17.2)
     rmagick (2.13.1)
-    rqrcode (0.4.1)
+    rqrcode (0.4.2)
 
 PLATFORMS
   ruby
