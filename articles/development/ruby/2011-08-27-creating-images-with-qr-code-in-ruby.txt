@@ -161,7 +161,8 @@ interesting than an abstract horse in surrealistic vacuum. ;)) That's why I have
 added QR Code into the bottom of each page (visible on "printer-friendly"
 version of styles). Explanation of how did I made this is big enough to become
 separate article. So, you can either wait for my new post or take a look at
-sources of my blog for interesting files:
+sources (see revision [cf2c8c71c5440cebfe1b601f4449ae6a711b9002][8]) of my blog
+for interesting files:
 
 * config.ru
 * templates/layout.rhtml
@@ -183,3 +184,4 @@ QR Code pattern (image). See [QR Code Patent FAQ][7] for more info.
 [5]: https://github.com/rmagick/rmagick
 [6]: http://www.denso-wave.com/en/adcd/
 [7]: http://www.denso-wave.com/qrcode/faqpatent-e.html
+[8]: https://github.com/ixti/blog/tree/cf2c8c71c5440cebfe1b601f4449ae6a711b9002
