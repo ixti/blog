@@ -40,5 +40,15 @@ module Toto
     def qrcode_enabled?
       defined? Rack::QRCode
     end
+
+    def page_title! str
+      page_title.push str
+      str
+    end
+
+    def page_title
+      @page_title = [] if @page_title.nil?
+      @page_title
+    end
   end
 end

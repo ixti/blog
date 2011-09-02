@@ -7,7 +7,7 @@
   <meta name="author" content="<%= @config[:author] %>">
   <meta name="generator" content="toto">
   
-  <title><%= title %></title>
+  <title><%= page_title.reverse.push(@config[:title]).join ' ~ ' %></title>
   
   <!-- Hey hacker! You can use direct Atom Feed: <%= @config[:url] %>/index.xml -->
 
