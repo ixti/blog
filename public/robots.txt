@@ -1,1 +1,6 @@
 User-agent: *
+Disallow: /bits/
+Disallow: /images/
+Disallow: /css/
+Disallow: /js/
+Disallow: /blank.html
