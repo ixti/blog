@@ -1,5 +1,5 @@
 ---
-title:  Understanding Rack
+title:  Understanding Rack Builder
 tags:   ruby, rack, server, rails, sinatra
 date:   03/09/2011
 
@@ -288,8 +288,8 @@ use Rack::CommonLogger
 
 use "/downloads" do
   # self here is an instance of second Builder
-  use SomeMiddleware
-  run Rack::Directory, "public/downloads"
+  use SomeMiddleware, :root => 'public/downloads'
+  run proc { [500, {"Content-Type"=>"text/plain"}, "Application Error"] }
 end
 
 map "/" do
