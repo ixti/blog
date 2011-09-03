@@ -41,4 +41,9 @@ module Toto
       defined? Rack::QRCode
     end
   end
+
+  class Article
+    def has_bits?() ::File.directory?(::File.join '.', bits_dir)        end
+    def bits_dir()  "/bits/#{self[:date].strftime "%Y-%m-%d"}-#{slug}"  end
+  end
 end

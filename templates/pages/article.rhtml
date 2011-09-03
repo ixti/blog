@@ -6,6 +6,11 @@
 
   <section class="content">
     <%= body %>
+    <% if has_bits? %>
+    <div id="bits">
+      This post has related materials which you can <a href="<%= bits_dir %>">browse</a> and download.
+    </div>
+    <% end %>
   </section>
 
   <% if @config[:disqus] %>

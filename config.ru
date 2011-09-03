@@ -25,30 +25,32 @@ rescue LoadError
 end
 
 
-# support bits middleware
-require './lib/rack/bits'
-use Rack::Bits, {:path => '/bits', :root => 'bits'}
-
-
 # show exceptions when not-production
 unless 'production' == ENV['RACK_ENV']
   use Rack::ShowExceptions
 end
 
 
-# toto extensions
-require './lib/toto'
-
-
-toto = Toto::Server.new do
-  set :author,      "Aleksey V. Zapparov AKA ixti"
-  set :title,       "ixti's personal sandbox"
-  set :url,         "http://blog.ixti.ru"
-  set :markdown,    [:gh_blockcode, :strikethrough, :fenced_code, :no_intraemphasis]
-  set :disqus,      "ixti"
-  set :cache,       24*60*60
+map "/bits" do
+  run Rack::Directory.new 'bits'
 end
 
-run toto
+
+map "/" do
+  # toto extensions
+  require './lib/toto'
+
+  toto = Toto::Server.new do
+    set :author,      "Aleksey V. Zapparov AKA ixti"
+    set :title,       "ixti's personal sandbox"
+    set :url,         "http://blog.ixti.ru"
+    set :markdown,    [:gh_blockcode, :strikethrough, :fenced_code, :no_intraemphasis]
+    set :disqus,      "ixti"
+    set :cache,       24*60*60
+  end
+
+  run toto
+end
+
 
 # vim:ts=2:sw=2
