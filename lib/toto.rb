@@ -40,6 +40,18 @@ module Toto
     def qrcode_enabled?
       defined? Rack::QRCode
     end
+
+    def noindex!
+      @noindex = true
+    end
+
+    def nofollow!
+      @nofollow = true
+    end
+
+    def robots
+      [] << (@noindex ? 'noindex' : 'index') << (@nofollow ? 'noindex' : 'follow')
+    end
   end
 
   class Article

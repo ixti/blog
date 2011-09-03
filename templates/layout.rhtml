@@ -6,6 +6,7 @@
   <meta name="description" content="Private scratchpad with public access">
   <meta name="author" content="<%= @config[:author] %>">
   <meta name="generator" content="toto">
+  <meta name="robots" content="<%= robots.join(',') %>">
   
   <title><%= page_title.reverse.push(@config[:title]).join ' ~ ' %></title>
   
