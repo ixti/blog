@@ -284,18 +284,22 @@ scope of responsibility:
 ``` ruby
 use Rack::CommonLogger
 
+# self here is an instance of first Builder
+
 use "/downloads" do
-  use Rack::Directory, {:root => 'public/downloads'}
-  use Rack::Static, {:urls => ['/'], :root => 'public/downloads'}
-  run self
+  # self here is an instance of second Builder
+  use SomeMiddleware
+  run Rack::Directory, "public/downloads"
 end
 
 map "/" do
+  # self here is an instance of third Builder
   run Application,new
 end
 ```
 
-And more than this you can nest map - see [Builder's tutorial][5] for details.
+After all, take a look on [Builder's tutorial][5] for some other details and
+info about how you can easily nest maps.
 
 
 [1]: http://rack.rubyforge.org/
