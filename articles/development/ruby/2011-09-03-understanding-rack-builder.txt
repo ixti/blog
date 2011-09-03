@@ -238,6 +238,10 @@ end
 That's the most easiest way. But there's alternative way, when middleware does
 not provides such ability (e.g. `Rack::Directory`) - Builder's method `map()`.
 
+> **NOTICE** In fact _Rack::Directory_ is not a middleware. It's an application.
+> So you can't pass it to `use()` method. Middleware should accept instance of
+> next aaplication or middleware as first argument of constructor.
+
 This method creates an instance of _URLMap_ which in it's turn a special
 middleware. So if you started to use `map()` you will need to define map for
 default route as well, in other words, this won't work:
