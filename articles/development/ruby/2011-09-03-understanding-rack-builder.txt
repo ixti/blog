@@ -298,7 +298,7 @@ end
 
 map "/" do
   # self here is an instance of third Builder
-  run Application,new
+  run Application.new
 end
 ```
 
