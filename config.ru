@@ -47,6 +47,10 @@ map "/" do
     set :markdown,    [:gh_blockcode, :strikethrough, :fenced_code, :no_intraemphasis]
     set :disqus,      "ixti"
     set :cache,       24*60*60
+    set :error,       lambda { |code|
+      code = 500 unless [400, 404, 500].include? code.to_i
+      IO.read "public/#{code}.html"
+    }
   end
 
   run toto
