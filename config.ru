@@ -28,6 +28,9 @@ end
 # show exceptions when not-production
 unless 'production' == ENV['RACK_ENV']
   use Rack::ShowExceptions
+else
+  require './lib/rack/app_error'
+  use Rack::AppError, :file => 'public/500.html'
 end
 
 
