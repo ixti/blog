@@ -10,6 +10,15 @@ use Rack::Static, {
 }
 
 
+# handle exceptions
+unless 'production' == ENV['RACK_ENV']
+  use Rack::ShowExceptions
+else
+  require './lib/rack/app_error'
+  use Rack::AppError, :file => 'public/500.html'
+end
+
+
 # qrcode middleware
 begin
   Bundler.require :qrcode
@@ -22,15 +31,6 @@ begin
   }
 rescue LoadError
   puts 'WARN: QR Code support disabled - bundler failed to load required gems.'
-end
-
-
-# show exceptions when not-production
-unless 'production' == ENV['RACK_ENV']
-  use Rack::ShowExceptions
-else
-  require './lib/rack/app_error'
-  use Rack::AppError, :file => 'public/500.html'
 end
 
 
