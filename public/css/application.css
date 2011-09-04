@@ -223,13 +223,13 @@ header a, header a:visited { color: #000; text-decoration: none; }
 #main { background-color: #fff; border-radius: 4px; box-shadow: inset 0px 0px 1px 0px #111, 0px 0px 4px 0px #555, 0px 0px 16px 2px #000; width: 920px; padding: 20px; }
 
 #header { margin-bottom: 1em; }
-#header * { color: #000; text-decoration: none; }
-#header img { width: 920px; height: 198px; background-color: #000; }
+#header a { color: #000; text-decoration: none; }
+#header img { background-color: #000; }
 #header #title { width: 600px; height: 32px; margin: 10px 0px 20px; line-height: 32px; float: left; }
 #header #moto { width: 320px; height: 32px; margin: 10px 0px 20px; line-height: 32px; font-style: italic; font-size: 0.8em; color: #777; text-align: right; float: right; clear: right; }
 
 #menu { margin: 0px; padding: 10px 15px; background-color: #000; color: #222; font-family: 'Helvetica Neue', Helvetica, 'Nimbus Sans L', sans-serif; font-size: .9em; line-height: 1em; text-align: right; }
-#menu * { color: #555; }
+#menu a { color: #555; }
 #menu a:hover { color: #ccc; text-shadow: 0px 0px 7px #fff; }
 
 .extra { font-size: 0.7em; font-style: italic; color: #ccc;}
@@ -245,11 +245,10 @@ li .extra { margin: -0.5em 0.25em 0.75em }
 .post header .extra { margin-top: -20px; }
 .post p:first-child { margin-top: 0; }
 .post p:last-child { margin-bottom: 0; }
-.post .more { font-size: 1.1em; font-style: italic; text-align: right; }
-.post .more a { text-decoration: none; }
-.post .more a:hover { text-decoration: underline; }
 
-.post .more { opacity: 0.15; -moz-transition: 0.5s opacity; -webkit-transition: 0.5s opacity; transition: 0.5s opacity; }
+.more { font-size: 1.1em; font-style: italic; text-align: right; opacity: 0.15; -moz-transition: 0.5s opacity; -webkit-transition: 0.5s opacity; transition: 0.5s opacity; }
+.more a { text-decoration: none; }
+.more a:hover { text-decoration: underline; }
 .post:hover .more { opacity: 1; }
 
 #bits { text-align: center; font-style: italic; background: #f7f7f7; border: 1px solid #eee; border-radius: 3px; padding: 1em; box-shadow: inset 0px 0px 16px #efefef; }
@@ -267,7 +266,7 @@ li .extra { margin: -0.5em 0.25em 0.75em }
 #tags-cloud .nube-8 { font-size: 1.6em; }
 
 #copyrights { margin: 16px; font-size: 0.9em; text-align: center; }
-#copyrights, #copyrights * { color: #555; text-shadow: 1px 1px 0px #000; }
+#copyrights, #copyrights a { color: #555; text-shadow: 1px 1px 0px #000; }
 #copyrights a:hover { color: #999; }
 
 #qr-code { display: none; margin-top: 2em; text-align: center; }
