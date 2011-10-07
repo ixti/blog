@@ -45,7 +45,7 @@ map "/" do
   toto = Toto::Server.new do
     set :author,      "Aleksey V. Zapparov AKA ixti"
     set :title,       "ixti's personal sandbox"
-    set :url,         "http://blog.ixti.ru"
+    set :url,         "http://blog.ixti.net"
     set :markdown,    [:gh_blockcode, :strikethrough, :fenced_code, :no_intraemphasis]
     set :disqus,      "ixti"
     set :cache,       24*60*60
