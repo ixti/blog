@@ -5,9 +5,11 @@ date:   26/10/2011
 
 This tip will be useless for most of all. But if you are involved in porting of
 something to something better (or at least something you get paid for), for
-example porting project from LESS[1] to SASS[2]. Well you don't need anything
+example porting project from [LESS][1] to [SASS][2]. Well you don't need anything
 special for such purpose, but the problem comes out when you want to have exact
 copy of original repo (with different branches), but with ported sources.
+
+~
 
 The best explanation of a problem is [my port][3] of [Twitter's Bootstrap][4]
 CSS framework. As you can see, I'm trying to make my _bootstrap.scss_ exactly
