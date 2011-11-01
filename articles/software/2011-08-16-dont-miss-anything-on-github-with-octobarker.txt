@@ -58,4 +58,4 @@ $ ./bin/octobarker --help
 [1]: https://www.github.com/
 [2]: http://nodejs.org/
 [3]: https://github.com/ixti/octobarker
-[4]: /images/articles/2011-08-16/octobarker.png
+[4]: /bits/2011-08-16-dont-miss-anything-on-github-with-octobarker/screenshot.png
