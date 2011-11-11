@@ -3,11 +3,11 @@ title:  Base64 encode/decode of UTF8 in browser with JS
 tags:   base64, utf8, unicode, javascript, snippet
 date:   11/11/2011
 
-While working on [live demo of JS-YAML][1] our pure JavaScript port of exciting
+While working on [live demo of JS-YAML][1], our pure JavaScript port of exciting
 [PyYAML][2]. I found that there's absolutely no ready solutions for encoding and
 decoding Base64 in JavaScript for unicode. Tons of Base64 encoders/decoders that
 will blow out your unicode string like `я обожаю ириьски` into something
-absolutely useful. Tons of utf8 encoders/decoders that just do not work.
+absolutely useless. Tons of utf8 encoders/decoders that just do not work.
 So I wrote my own...
 
 ~
