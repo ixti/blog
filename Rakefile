@@ -96,7 +96,7 @@ task :sitemap do
     Toto::Site.new($config).archives.delete(:archives).each do |article|
       d, m, y = article.date.split "/"
       xml.url do
-        xml.loc "#{BLOG_URL}#{article.path}".squeeze("/")
+        xml.loc "#{BLOG_URL}#{article.path.slice(1..-1)}"
         xml.lastmod "#{y}-#{m}-#{d}"
         xml.changefreq (Time.new(y, m, d) < archived) ? "never" : "monthly"
       end
