@@ -2,8 +2,10 @@ require 'fileutils'
 require 'bundler'
 Bundler.require
 
-@config = Toto::Config::Defaults
-@editor = ENV['EDITOR'] || ""
+BLOG_URL = "http://blog.ixti.net/"
+
+$config = Toto::Config::Defaults
+$editor = ENV['EDITOR'] || ""
 
 task :default => :new
 
@@ -17,7 +19,7 @@ task :new do
   article << "Once upon a time...\n\n"
 
   name = "#{Time.now.strftime("%Y-%m-%d")}#{'-' + slug if slug}"
-  post_path = "#{Toto::Paths[:articles]}/#{name}.#{@config[:ext]}"
+  post_path = "#{Toto::Paths[:articles]}/#{name}.#{$config[:ext]}"
   bits_path = "bits/#{name}"
 
   unless File.exist? post_path
@@ -34,8 +36,8 @@ task :new do
       toto "bits will be kept under #{bits_path}."
     end
 
-    if !@editor.empty? && ask('Edit? ').upcase[0] == 'Y'
-      system "#{@editor} #{post_path}"
+    if !$editor.empty? && ask('Edit? ').upcase[0] == 'Y'
+      system "#{$editor} #{post_path}"
     end
 
     toto "an article was created for you at #{post_path}."
@@ -44,7 +46,7 @@ task :new do
   end
 end
 
-if !@editor.empty?
+if !$editor.empty?
   @articles_per_page = 9;
 
   desc "Edit artile."
@@ -74,6 +76,35 @@ if !@editor.empty?
     end
 
     system "#{@editor} #{page[id - 1]}"
+  end
+end
+
+
+desc "Rebuild sitemap"
+task :sitemap do
+  xml = Builder::XmlMarkup.new(:indent => 2)
+  xml.urlset "xmlns" => "http://www.sitemaps.org/schemas/sitemap/0.9" do
+    xml.url do
+      xml.loc BLOG_URL
+      xml.lastmod "2005-01-01"
+      xml.changefreq "weekly"
+      xml.priority 0.8
+    end
+
+    archived = Time.new - (365 * 24 * 60 * 60)
+
+    Toto::Site.new($config).archives.delete(:archives).each do |article|
+      d, m, y = article.date.split "/"
+      xml.url do
+        xml.loc "#{BLOG_URL}#{article.path}".squeeze("/")
+        xml.lastmod "#{y}-#{m}-#{d}"
+        xml.changefreq (Time.new(y, m, d) < archived) ? "never" : "monthly"
+      end
+    end
+  end
+
+  File.open "sitemap.xml", "w+" do |f|
+    f.puts xml.target!
   end
 end
 
