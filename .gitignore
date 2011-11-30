@@ -1,3 +1,5 @@
 .bundle
 sitemap.xml
 sitemap.xml.gz
+tmp/
+log/
