@@ -80,25 +80,32 @@ if !$editor.empty?
 end
 
 
+def article_date article
+  d, m, y = article.date.split "/"
+  Time.new(y, m, d)
+end
+
 desc "Rebuild sitemap"
 task :sitemap do
+  articles = Toto::Site.new($config).archives.delete(:archives)
+
   xml = Builder::XmlMarkup.new(:indent => 2)
   xml.urlset "xmlns" => "http://www.sitemaps.org/schemas/sitemap/0.9" do
     xml.url do
       xml.loc BLOG_URL
-      xml.lastmod "2005-01-01"
+      xml.lastmod article_date(articles.first).strftime '%Y-%m-%d'
       xml.changefreq "weekly"
       xml.priority 0.8
     end
 
     archived = Time.new - (365 * 24 * 60 * 60)
 
-    Toto::Site.new($config).archives.delete(:archives).each do |article|
-      d, m, y = article.date.split "/"
+    articles.each do |article|
+      date = article_date(article)
       xml.url do
         xml.loc "#{BLOG_URL}#{article.path.slice(1..-1)}"
-        xml.lastmod "#{y}-#{m}-#{d}"
-        xml.changefreq (Time.new(y, m, d) < archived) ? "never" : "monthly"
+        xml.lastmod date.strftime '%Y-%m-%d'
+        xml.changefreq (date < archived) ? "never" : "monthly"
       end
     end
   end
