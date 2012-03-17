@@ -40,9 +40,11 @@ task :new do
       system "#{$editor} #{post_path}"
     end
 
-    toto "an article was created for you at #{post_path}."
+    toto "an article was created for you at:", "\e[32m#{post_path}\e[0m",
   else
-    toto "I can't create the article, #{post_path} already exists."
+    toto "I can't create the article:",
+         "\e[33m#{post_path}\e[0m",
+         "\e[31mPath already exists.\e[0m"
   end
 end
 
@@ -52,7 +54,7 @@ if !$editor.empty?
   desc "Edit artile."
   task :edit do
     articles = Dir["#{Toto::Paths[:articles]}/**/*"].select{|f| File.file? f}.sort_by{|f| File.basename f}.reverse!
-  
+
     begin
       page = articles.slice!(0, @articles_per_page)
       page.each_with_index {|f, i| puts "%2d %s" % [i + 1, File.basename(f)]}
@@ -115,8 +117,12 @@ task :sitemap do
   end
 end
 
-def toto msg
-  puts "\n  toto ~ #{msg}\n\n"
+def toto *msgs
+  puts "\n\n"
+  puts "  toto says:"
+  puts "  ~"
+  msgs.each{ |msg| puts "  #{msg}" }
+  puts "\n\n"
 end
 
 def ask message
