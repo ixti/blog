@@ -4,7 +4,7 @@ Bundler.require
 
 BLOG_URL = "http://blog.ixti.net/"
 
-$config = Toto::Config::Defaults
+$config = Toto::Config::Defaults.merge({ :ext => "mkdown" })
 $editor = ENV['EDITOR'] || ""
 
 task :default => :new
